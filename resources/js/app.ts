@@ -6,10 +6,10 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import '@/lib/chart';
 import { initializeFlashToast } from '@/lib/flashToast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Buzón Solariega';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => (title ? `${appName} | ${title}` : appName),
     layout: (name) => {
         switch (true) {
             case name.startsWith('public/'):

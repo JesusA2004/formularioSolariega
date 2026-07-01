@@ -136,7 +136,48 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Buzón de Quejas, Sugerencias y Reportes" />
+    <Head>
+        <title>Buzón Solariega</title>
+        <meta
+            name="description"
+            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias, reportes e incidentes internos de forma segura y organizada."
+        />
+        <meta
+            name="keywords"
+            content="Buzón Solariega, Solariega Cenit, quejas, sugerencias, reportes internos, buzón confidencial, ambiente laboral"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://buzon.solariegacenit.com/reportar" />
+
+        <meta property="og:title" content="Buzón Solariega" />
+        <meta
+            property="og:description"
+            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias y reportes internos."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://buzon.solariegacenit.com/reportar" />
+        <meta property="og:site_name" content="Buzón Solariega" />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Buzón Solariega" />
+        <meta
+            name="twitter:description"
+            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias y reportes internos."
+        />
+
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "Buzón Solariega",
+                "url": "https://buzon.solariegacenit.com",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Solariega Cenit"
+                }
+            }
+        </script>
+    </Head>
 
     <PublicPageShell>
         <template #title>Buzón de Quejas, Sugerencias y Reportes</template>
