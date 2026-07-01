@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, ArrowRight, ShieldCheck } from '@lucide/vue';
+import {
+    ArrowLeft,
+    ArrowRight,
+    HeartHandshake,
+    ShieldCheck,
+    Sparkles,
+} from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import DatePickerField from '@/components/public/DatePickerField.vue';
@@ -23,20 +29,19 @@ defineProps<{
     options: FormOptions;
 }>();
 
-const steps = [
-    'Tipo de solicitud',
-    'Tus datos',
-    'Descripción',
-    'Urgencia y evidencia',
-    'Seguimiento',
-];
+const steps = ['Tu mensaje', 'Detalles', 'Seguimiento'];
 
 const stepFields: string[][] = [
-    ['request_type', 'is_anonymous'],
-    ['full_name', 'department', 'location', 'incident_date'],
-    ['description', 'involved_people'],
-    ['urgency_level', 'has_evidence', 'attachments'],
-    ['wants_follow_up', 'contact_info', 'accepted_terms'],
+    [
+        'request_type',
+        'sender_type',
+        'is_anonymous',
+        'full_name',
+        'wants_follow_up',
+        'contact_info',
+    ],
+    ['department', 'location', 'incident_date', 'description', 'involved_people'],
+    ['urgency_level', 'has_evidence', 'attachments', 'accepted_terms'],
 ];
 
 const currentStep = ref(0);
@@ -53,6 +58,7 @@ const anonymousOptions = [
 
 const form = useForm({
     request_type: '',
+    sender_type: '',
     is_anonymous: '',
     full_name: '',
     department: '',
@@ -87,15 +93,24 @@ watch(wantsFollowUp, (wants) => {
 const stepIsValid = computed(() => {
     switch (currentStep.value) {
         case 0:
-            return form.request_type !== '' && form.is_anonymous !== '';
+            return (
+                form.request_type !== '' &&
+                form.sender_type !== '' &&
+                form.is_anonymous !== '' &&
+                form.wants_follow_up !== ''
+            );
         case 1:
-            return form.department !== '' && form.location.trim() !== '';
+            return (
+                form.department !== '' &&
+                form.location.trim() !== '' &&
+                form.description.trim().length >= 20
+            );
         case 2:
-            return form.description.trim().length >= 20;
-        case 3:
-            return form.urgency_level !== '' && form.has_evidence !== '';
-        case 4:
-            return form.wants_follow_up !== '' && form.accepted_terms;
+            return (
+                form.urgency_level !== '' &&
+                form.has_evidence !== '' &&
+                form.accepted_terms
+            );
         default:
             return true;
     }
@@ -165,296 +180,362 @@ function submit() {
         />
     </Head>
 
-    <PublicPageShell>
+    <PublicPageShell content-class="max-w-6xl">
         <template #title>Buzón Solariega</template>
         <template #subtitle
-            >Un canal confidencial para compartir quejas, sugerencias,
-            reportes o situaciones que requieran atención.</template
+            >Un espacio para compartir comentarios, sugerencias o situaciones
+            que requieran atención.</template
         >
 
         <p
             class="mx-auto mb-6 max-w-xl text-center text-sm text-muted-foreground"
         >
-            Tu reporte será revisado con seriedad, confidencialidad y respeto
-            por el área correspondiente.
+            Queremos escucharte y dar seguimiento a cada mensaje de forma
+            responsable, respetuosa y confidencial.
         </p>
 
         <div class="mb-6 flex justify-center">
             <span
                 class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-medium tracking-wide text-gold-foreground uppercase"
             >
-                Completa tu solicitud
+                Canal de atención
             </span>
         </div>
 
-        <Card
-            class="mx-auto w-full max-w-2xl animate-in rounded-2xl border-none bg-card/90 shadow-2xl shadow-black/10 backdrop-blur duration-700 fade-in slide-in-from-bottom-4"
-        >
-            <CardHeader class="space-y-4 pb-2">
-                <StepProgress :steps="steps" :current-step="currentStep" />
-            </CardHeader>
-
-            <CardContent class="pt-4">
-                <form
-                    class="space-y-6"
-                    @submit.prevent="
-                        currentStep === steps.length - 1 ? submit() : goNext()
-                    "
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+            <!-- Left column: premium visual block -->
+            <div class="lg:sticky lg:top-8 lg:self-start">
+                <div
+                    class="relative overflow-hidden rounded-2xl border border-[#1b3226] bg-gradient-to-br from-[#10251B] via-[#152a1f] to-[#0c1712] p-7 text-marfil shadow-2xl shadow-black/20"
                 >
-                    <!-- Step 0 -->
                     <div
-                        v-if="currentStep === 0"
-                        class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
-                    >
-                        <div class="space-y-2">
-                            <Label>Tipo de solicitud</Label>
-                            <OptionCardGroup
-                                v-model="form.request_type"
-                                :options="options.requestTypes"
-                                :columns="2"
-                            />
-                            <InputError :message="form.errors.request_type" />
-                        </div>
+                        class="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-gold/15 blur-2xl"
+                    />
+                    <div
+                        class="pointer-events-none absolute inset-x-6 bottom-6 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
+                    />
 
-                        <div class="space-y-2">
-                            <Label
-                                >¿Quieres enviar este reporte de forma
-                                anónima?</Label
-                            >
-                            <OptionCardGroup
-                                v-model="form.is_anonymous"
-                                :options="anonymousOptions"
-                                :columns="1"
-                            />
-                            <InputError :message="form.errors.is_anonymous" />
-                        </div>
+                    <div
+                        class="mb-5 flex size-11 items-center justify-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/40"
+                    >
+                        <HeartHandshake class="size-5" />
                     </div>
 
-                    <!-- Step 1 -->
-                    <div
-                        v-else-if="currentStep === 1"
-                        class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
+                    <h2 class="text-lg font-semibold">
+                        Tu opinión nos ayuda a mejorar
+                    </h2>
+                    <p class="mt-2 text-sm text-marfil/80">
+                        Cada mensaje es revisado con seriedad para fortalecer
+                        la experiencia de colaboradores, clientes y
+                        visitantes.
+                    </p>
+
+                    <ul class="mt-6 space-y-3 text-sm">
+                        <li class="flex items-center gap-2.5">
+                            <ShieldCheck class="size-4 shrink-0 text-gold" />
+                            Atención confidencial
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <Sparkles class="size-4 shrink-0 text-gold" />
+                            Seguimiento ordenado
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <HeartHandshake class="size-4 shrink-0 text-gold" />
+                            Mejora continua
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right column: form -->
+            <Card
+                class="w-full animate-in rounded-2xl border-none bg-card/90 shadow-2xl shadow-black/10 backdrop-blur duration-700 fade-in slide-in-from-bottom-4"
+            >
+                <CardHeader class="space-y-4 pb-2">
+                    <StepProgress :steps="steps" :current-step="currentStep" />
+                </CardHeader>
+
+                <CardContent class="pt-4">
+                    <form
+                        class="space-y-6"
+                        @submit.prevent="
+                            currentStep === steps.length - 1
+                                ? submit()
+                                : goNext()
+                        "
                     >
-                        <div v-if="!isAnonymous" class="space-y-2">
-                            <Label for="full_name">Nombre completo</Label>
-                            <Input
-                                id="full_name"
-                                v-model="form.full_name"
-                                placeholder="Escribe tu nombre completo"
-                            />
-                            <p class="text-xs text-muted-foreground">
-                                Llena este campo solo si deseas seguimiento
-                                directo.
-                            </p>
-                            <InputError :message="form.errors.full_name" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label>Área o departamento</Label>
-                            <OptionCardGroup
-                                v-model="form.department"
-                                :options="options.departments"
-                                :columns="2"
-                            />
-                            <InputError :message="form.errors.department" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="location"
-                                >Sucursal, planta o ubicación</Label
-                            >
-                            <Input
-                                id="location"
-                                v-model="form.location"
-                                placeholder="Ejemplo: Solariega Cenit, planta principal, oficinas, almacén, etc."
-                            />
-                            <InputError :message="form.errors.location" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label>Fecha aproximada del hecho</Label>
-                            <DatePickerField
-                                v-model="form.incident_date"
-                                placeholder="Selecciona una fecha (opcional)"
-                            />
-                            <InputError :message="form.errors.incident_date" />
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div
-                        v-else-if="currentStep === 2"
-                        class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
-                    >
-                        <div class="space-y-2">
-                            <Label for="description">Cuéntanos qué ocurrió</Label>
-                            <p class="text-xs text-muted-foreground">
-                                Describe la situación con el mayor detalle
-                                posible: qué pasó, cuándo ocurrió, dónde
-                                sucedió y quiénes estuvieron involucrados, si
-                                aplica.
-                            </p>
-                            <Textarea
-                                id="description"
-                                v-model="form.description"
-                                rows="6"
-                                placeholder="Escribe aquí los detalles de tu reporte..."
-                            />
-                            <p class="text-xs text-muted-foreground">
-                                Mínimo 20 caracteres.
-                                {{ form.description.length }}/5000
-                            </p>
-                            <InputError :message="form.errors.description" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="involved_people"
-                                >Personas involucradas</Label
-                            >
-                            <Textarea
-                                id="involved_people"
-                                v-model="form.involved_people"
-                                rows="3"
-                                placeholder="Puedes dejarlo en blanco si no deseas mencionar nombres."
-                            />
-                            <InputError
-                                :message="form.errors.involved_people"
-                            />
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div
-                        v-else-if="currentStep === 3"
-                        class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
-                    >
-                        <div class="space-y-2">
-                            <Label
-                                >¿Qué tan urgente consideras esta
-                                situación?</Label
-                            >
-                            <UrgencyLevelPicker
-                                v-model="form.urgency_level"
-                                :options="options.urgencyLevels"
-                            />
-                            <InputError :message="form.errors.urgency_level" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label>¿Cuentas con evidencia?</Label>
-                            <OptionCardGroup
-                                v-model="form.has_evidence"
-                                :options="yesNoOptions"
-                                :columns="2"
-                            />
-                            <InputError :message="form.errors.has_evidence" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label>Adjuntar evidencia</Label>
-                            <FileDropzone v-model="form.attachments" />
-                            <InputError :message="form.errors.attachments" />
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div
-                        v-else
-                        class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
-                    >
-                        <div class="space-y-2">
-                            <Label>¿Deseas recibir seguimiento?</Label>
-                            <OptionCardGroup
-                                v-model="form.wants_follow_up"
-                                :options="yesNoOptions"
-                                :columns="2"
-                            />
-                            <InputError
-                                :message="form.errors.wants_follow_up"
-                            />
-                        </div>
-
+                        <!-- Section 0: Tu mensaje -->
                         <div
-                            v-if="wantsFollowUp && !isAnonymous"
-                            class="space-y-2"
+                            v-if="currentStep === 0"
+                            class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
                         >
-                            <Label for="contact_info"
-                                >Correo o teléfono de contacto</Label
+                            <div class="space-y-2">
+                                <Label>Tipo de mensaje</Label>
+                                <OptionCardGroup
+                                    v-model="form.request_type"
+                                    :options="options.requestTypes"
+                                    :columns="2"
+                                />
+                                <InputError
+                                    :message="form.errors.request_type"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>¿Quién envía el mensaje?</Label>
+                                <OptionCardGroup
+                                    v-model="form.sender_type"
+                                    :options="options.senderTypes"
+                                    :columns="3"
+                                />
+                                <InputError
+                                    :message="form.errors.sender_type"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label
+                                    >¿Quieres mantener tus datos en
+                                    reserva?</Label
+                                >
+                                <OptionCardGroup
+                                    v-model="form.is_anonymous"
+                                    :options="anonymousOptions"
+                                    :columns="1"
+                                />
+                                <InputError
+                                    :message="form.errors.is_anonymous"
+                                />
+                            </div>
+
+                            <div v-if="!isAnonymous" class="space-y-2">
+                                <Label for="full_name"
+                                    >Nombre, si aplica</Label
+                                >
+                                <Input
+                                    id="full_name"
+                                    v-model="form.full_name"
+                                    placeholder="Escribe tu nombre completo"
+                                />
+                                <InputError
+                                    :message="form.errors.full_name"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>¿Quieres recibir seguimiento?</Label>
+                                <OptionCardGroup
+                                    v-model="form.wants_follow_up"
+                                    :options="yesNoOptions"
+                                    :columns="2"
+                                />
+                                <InputError
+                                    :message="form.errors.wants_follow_up"
+                                />
+                            </div>
+
+                            <div
+                                v-if="wantsFollowUp && !isAnonymous"
+                                class="space-y-2"
                             >
-                            <Input
-                                id="contact_info"
-                                v-model="form.contact_info"
-                                placeholder="correo@ejemplo.com o número telefónico"
-                            />
-                            <p class="text-xs text-muted-foreground">
-                                Solo llena este campo si deseas que se te
-                                contacte para seguimiento.
-                            </p>
-                            <InputError :message="form.errors.contact_info" />
+                                <Label for="contact_info"
+                                    >Contacto, si aplica</Label
+                                >
+                                <Input
+                                    id="contact_info"
+                                    v-model="form.contact_info"
+                                    placeholder="correo@ejemplo.com o número telefónico"
+                                />
+                                <InputError
+                                    :message="form.errors.contact_info"
+                                />
+                            </div>
                         </div>
 
+                        <!-- Section 1: Detalles -->
                         <div
-                            class="flex items-start gap-3 rounded-lg border bg-muted/40 p-4"
+                            v-else-if="currentStep === 1"
+                            class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
                         >
-                            <Checkbox
-                                id="accepted_terms"
-                                v-model="form.accepted_terms"
-                                class="mt-0.5"
-                            />
-                            <Label
-                                for="accepted_terms"
-                                class="text-sm leading-relaxed font-normal"
-                            >
-                                Confirmo que la información proporcionada es
-                                verdadera según mi conocimiento y autorizo que
-                                sea revisada de manera confidencial para su
-                                seguimiento interno.
-                            </Label>
-                        </div>
-                        <InputError :message="form.errors.accepted_terms" />
+                            <div class="space-y-2">
+                                <Label>Área o categoría</Label>
+                                <OptionCardGroup
+                                    v-model="form.department"
+                                    :options="options.departments"
+                                    :columns="2"
+                                />
+                                <InputError :message="form.errors.department" />
+                            </div>
 
+                            <div class="space-y-2">
+                                <Label for="location"
+                                    >Ubicación, sucursal o área</Label
+                                >
+                                <Input
+                                    id="location"
+                                    v-model="form.location"
+                                    placeholder="Ejemplo: Solariega Cenit, planta principal, oficinas, almacén, etc."
+                                />
+                                <InputError :message="form.errors.location" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>Fecha aproximada</Label>
+                                <DatePickerField
+                                    v-model="form.incident_date"
+                                    placeholder="Selecciona una fecha (opcional)"
+                                />
+                                <InputError
+                                    :message="form.errors.incident_date"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label for="description"
+                                    >Cuéntanos tu mensaje</Label
+                                >
+                                <p class="text-xs text-muted-foreground">
+                                    Describe la situación con el mayor
+                                    detalle posible: qué pasó, cuándo
+                                    ocurrió, dónde sucedió y quiénes
+                                    estuvieron involucrados, si aplica.
+                                </p>
+                                <Textarea
+                                    id="description"
+                                    v-model="form.description"
+                                    rows="5"
+                                    placeholder="Escribe aquí los detalles de tu mensaje..."
+                                />
+                                <p class="text-xs text-muted-foreground">
+                                    Mínimo 20 caracteres.
+                                    {{ form.description.length }}/5000
+                                </p>
+                                <InputError
+                                    :message="form.errors.description"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label for="involved_people"
+                                    >Personas relacionadas, si aplica</Label
+                                >
+                                <Textarea
+                                    id="involved_people"
+                                    v-model="form.involved_people"
+                                    rows="3"
+                                    placeholder="Puedes dejarlo en blanco si no deseas mencionar nombres."
+                                />
+                                <InputError
+                                    :message="form.errors.involved_people"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Seguimiento -->
                         <div
-                            class="flex items-center gap-2 rounded-lg bg-primary/5 p-3 text-xs text-primary"
-                        >
-                            <ShieldCheck class="size-4 shrink-0" />
-                            Tu información se maneja de forma confidencial por
-                            el área correspondiente.
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex items-center justify-between gap-3 border-t pt-5"
-                    >
-                        <Button
-                            v-if="currentStep > 0"
-                            type="button"
-                            variant="outline"
-                            @click="goBack"
-                        >
-                            <ArrowLeft class="size-4" />
-                            Atrás
-                        </Button>
-                        <div v-else />
-
-                        <Button
-                            v-if="currentStep < steps.length - 1"
-                            type="submit"
-                            :disabled="!stepIsValid"
-                        >
-                            Siguiente
-                            <ArrowRight class="size-4" />
-                        </Button>
-                        <Button
                             v-else
-                            type="submit"
-                            :disabled="!stepIsValid || form.processing"
+                            class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
                         >
-                            <Spinner v-if="form.processing" />
-                            Enviar solicitud
-                        </Button>
-                    </div>
-                </form>
-            </CardContent>
-        </Card>
+                            <div class="space-y-2">
+                                <Label
+                                    >¿Qué tan urgente consideras esta
+                                    situación?</Label
+                                >
+                                <UrgencyLevelPicker
+                                    v-model="form.urgency_level"
+                                    :options="options.urgencyLevels"
+                                />
+                                <InputError
+                                    :message="form.errors.urgency_level"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>¿Cuentas con evidencia?</Label>
+                                <OptionCardGroup
+                                    v-model="form.has_evidence"
+                                    :options="yesNoOptions"
+                                    :columns="2"
+                                />
+                                <InputError
+                                    :message="form.errors.has_evidence"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>Adjuntar archivos</Label>
+                                <FileDropzone v-model="form.attachments" />
+                                <InputError
+                                    :message="form.errors.attachments"
+                                />
+                            </div>
+
+                            <div
+                                class="flex items-start gap-3 rounded-lg border bg-muted/40 p-4"
+                            >
+                                <Checkbox
+                                    id="accepted_terms"
+                                    v-model="form.accepted_terms"
+                                    class="mt-0.5"
+                                />
+                                <Label
+                                    for="accepted_terms"
+                                    class="text-sm leading-relaxed font-normal"
+                                >
+                                    Confirmo que la información proporcionada
+                                    es verdadera según mi conocimiento y
+                                    autorizo que sea revisada de manera
+                                    confidencial para su seguimiento interno.
+                                </Label>
+                            </div>
+                            <InputError
+                                :message="form.errors.accepted_terms"
+                            />
+
+                            <div
+                                class="flex items-center gap-2 rounded-lg bg-primary/5 p-3 text-xs text-primary"
+                            >
+                                <ShieldCheck class="size-4 shrink-0" />
+                                La información será revisada únicamente por
+                                el área correspondiente para brindar
+                                seguimiento adecuado.
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between gap-3 border-t pt-5"
+                        >
+                            <Button
+                                v-if="currentStep > 0"
+                                type="button"
+                                variant="outline"
+                                @click="goBack"
+                            >
+                                <ArrowLeft class="size-4" />
+                                Atrás
+                            </Button>
+                            <div v-else />
+
+                            <Button
+                                v-if="currentStep < steps.length - 1"
+                                type="submit"
+                                :disabled="!stepIsValid"
+                            >
+                                Siguiente
+                                <ArrowRight class="size-4" />
+                            </Button>
+                            <Button
+                                v-else
+                                type="submit"
+                                :disabled="!stepIsValid || form.processing"
+                            >
+                                <Spinner v-if="form.processing" />
+                                Enviar mensaje
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     </PublicPageShell>
 </template>

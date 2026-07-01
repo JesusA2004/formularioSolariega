@@ -12,10 +12,10 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Solicitud enviada" />
+    <Head title="Mensaje enviado" />
 
     <PublicPageShell>
-        <template #title>Solicitud enviada correctamente</template>
+        <template #title>Mensaje enviado correctamente</template>
 
         <Card
             class="mx-auto w-full max-w-lg animate-in rounded-2xl border-none bg-card/90 shadow-2xl shadow-black/10 backdrop-blur duration-500 zoom-in-95 fade-in"
@@ -31,12 +31,12 @@ defineProps<{
 
                 <div class="space-y-2">
                     <h2 class="text-xl font-semibold">
-                        Solicitud enviada correctamente
+                        Mensaje enviado correctamente
                     </h2>
                     <p class="text-sm text-muted-foreground">
-                        Gracias por compartir tu reporte. La información será
-                        revisada de manera confidencial y con la seriedad
-                        correspondiente.
+                        Gracias por compartir tu mensaje. Será revisado con
+                        atención y, si corresponde, se dará seguimiento por
+                        el área responsable.
                     </p>
                 </div>
 
@@ -46,7 +46,7 @@ defineProps<{
                     <p
                         class="text-xs tracking-wide text-muted-foreground uppercase"
                     >
-                        Tu folio de seguimiento es
+                        Folio de seguimiento
                     </p>
                     <p
                         class="font-mono text-lg font-semibold tracking-wide text-primary"
@@ -56,11 +56,11 @@ defineProps<{
                 </div>
 
                 <p class="text-xs text-muted-foreground">
-                    Guarda este folio si deseas dar seguimiento a tu reporte.
+                    Guarda este folio si deseas dar seguimiento a tu mensaje.
                 </p>
 
                 <Button as-child class="mt-2 w-full">
-                    <Link :href="create()">Enviar otro reporte</Link>
+                    <Link :href="create()">Enviar otro mensaje</Link>
                 </Button>
             </CardContent>
         </Card>
