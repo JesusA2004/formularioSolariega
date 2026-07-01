@@ -27,11 +27,11 @@ defineProps<{
                         :href="create()"
                         class="flex flex-col items-center gap-3 font-medium"
                     >
-                        <BrandMark class="size-14 text-xl" />
-                        <span
-                            class="text-sm font-medium tracking-widest text-gold uppercase"
-                            >Solariega Cenit</span
-                        >
+                        <img
+                            src="/images/logoLetras.png"
+                            alt="Solariega Cenit"
+                            class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
+                        />
                     </Link>
                     <div class="space-y-2 text-center">
                         <h1 class="text-xl font-semibold text-marfil">
