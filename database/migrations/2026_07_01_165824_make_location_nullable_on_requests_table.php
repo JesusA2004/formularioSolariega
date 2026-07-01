@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->string('sender_type')->nullable()->after('request_type');
-            $table->index(['sender_type']);
+            $table->string('location')->nullable()->change();
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->dropIndex(['sender_type']);
-            $table->dropColumn('sender_type');
+            $table->string('location')->nullable(false)->default('')->change();
         });
     }
 };

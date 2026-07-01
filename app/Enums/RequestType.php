@@ -18,14 +18,31 @@ enum RequestType: string implements LabeledEnum
     public function label(): string
     {
         return match ($this) {
-            self::Queja => 'Queja',
+            self::Queja => 'Comentario',
             self::Sugerencia => 'Sugerencia',
-            self::Incidente => 'Incidente',
-            self::MalTrato => 'Mal trato',
-            self::Acoso => 'Acoso',
-            self::CondicionesLaborales => 'Condiciones laborales',
-            self::ProblemasColaboradores => 'Problemas con colaboradores',
+            self::Incidente => 'Situación a revisar',
+            self::MalTrato => 'Inconformidad',
+            self::Acoso => 'Inconformidad',
+            self::CondicionesLaborales => 'Situación a revisar',
+            self::ProblemasColaboradores => 'Solicitud de seguimiento',
             self::Otro => 'Otro',
         };
+    }
+
+    /**
+     * Subset con etiqueta única que se ofrece en el formulario público.
+     *
+     * @return array<int, self>
+     */
+    public static function publicOptions(): array
+    {
+        return [
+            self::Queja,
+            self::Sugerencia,
+            self::Incidente,
+            self::MalTrato,
+            self::ProblemasColaboradores,
+            self::Otro,
+        ];
     }
 }

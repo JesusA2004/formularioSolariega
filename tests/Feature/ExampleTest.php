@@ -1,7 +1,7 @@
 <?php
 
-test('the home route redirects to the public request form', function () {
-    $response = $this->get(route('home'));
+test('the home route serves the public request form', function () {
+    $response = $this->get(route('reportar.create'));
 
-    $response->assertRedirect(route('reportar.create'));
+    $response->assertOk();
 });

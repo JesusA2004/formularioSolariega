@@ -36,7 +36,7 @@ onMounted(async () => {
         await QRCode.toCanvas(canvasRef.value, props.publicUrl, {
             width: 320,
             margin: 2,
-            color: { dark: '#10251B', light: '#ffffff' },
+            color: { dark: '#1E1E1E', light: '#ffffff' },
         });
     }
 });

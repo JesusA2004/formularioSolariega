@@ -6,9 +6,7 @@ export type OptionItem = {
 
 export type FormOptions = {
     requestTypes: OptionItem[];
-    senderTypes: OptionItem[];
     departments: OptionItem[];
-    urgencyLevels: OptionItem[];
 };
 
 export type RequestStatusValue =
@@ -19,10 +17,8 @@ export type RequestSummary = {
     folio: string;
     request_type: string;
     request_type_label: string;
-    sender_type: string | null;
-    sender_type_label: string | null;
     department_label: string;
-    location?: string;
+    location?: string | null;
     urgency_level?: string;
     urgency_level_label: string;
     status: RequestStatusValue;
@@ -47,13 +43,11 @@ export type RequestDetail = {
     folio: string;
     request_type: string;
     request_type_label: string;
-    sender_type: string | null;
-    sender_type_label: string | null;
     is_anonymous: boolean;
     full_name: string | null;
     department: string;
     department_label: string;
-    location: string;
+    location: string | null;
     incident_date: string | null;
     description: string;
     involved_people: string | null;

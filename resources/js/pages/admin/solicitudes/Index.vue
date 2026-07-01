@@ -39,7 +39,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
-            { title: 'Solicitudes', href: solicitudes.index() },
+            { title: 'Mensajes', href: solicitudes.index() },
         ],
     },
 });
@@ -49,7 +49,6 @@ const props = defineProps<{
     filters: Record<string, string | undefined>;
     options: {
         requestTypes: OptionItem[];
-        senderTypes: OptionItem[];
         departments: OptionItem[];
         urgencyLevels: OptionItem[];
         statuses: OptionItem[];
@@ -61,7 +60,6 @@ const ALL = 'all';
 const search = ref(props.filters.search ?? '');
 const status = ref(props.filters.status ?? ALL);
 const requestType = ref(props.filters.request_type ?? ALL);
-const senderType = ref(props.filters.sender_type ?? ALL);
 const urgencyLevel = ref(props.filters.urgency_level ?? ALL);
 const department = ref(props.filters.department ?? ALL);
 const isAnonymous = ref(props.filters.is_anonymous ?? ALL);
@@ -81,8 +79,6 @@ function applyFilters() {
             status: status.value === ALL ? undefined : status.value,
             request_type:
                 requestType.value === ALL ? undefined : requestType.value,
-            sender_type:
-                senderType.value === ALL ? undefined : senderType.value,
             urgency_level:
                 urgencyLevel.value === ALL ? undefined : urgencyLevel.value,
             department: department.value === ALL ? undefined : department.value,
@@ -103,15 +99,7 @@ watch(search, () => {
 });
 
 watch(
-    [
-        status,
-        requestType,
-        senderType,
-        urgencyLevel,
-        department,
-        isAnonymous,
-        hasEvidence,
-    ],
+    [status, requestType, urgencyLevel, department, isAnonymous, hasEvidence],
     applyFilters,
 );
 
@@ -138,7 +126,6 @@ function clearFilters() {
     search.value = '';
     status.value = ALL;
     requestType.value = ALL;
-    senderType.value = ALL;
     urgencyLevel.value = ALL;
     department.value = ALL;
     isAnonymous.value = ALL;
@@ -153,7 +140,6 @@ const hasActiveFilters = computed(
         search.value !== '' ||
         status.value !== ALL ||
         requestType.value !== ALL ||
-        senderType.value !== ALL ||
         urgencyLevel.value !== ALL ||
         department.value !== ALL ||
         isAnonymous.value !== ALL ||
@@ -162,16 +148,16 @@ const hasActiveFilters = computed(
 </script>
 
 <template>
-    <Head title="Solicitudes" />
+    <Head title="Mensajes" />
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <div
             class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"
         >
             <div>
-                <h1 class="text-2xl font-semibold">Solicitudes</h1>
+                <h1 class="text-2xl font-semibold">Mensajes</h1>
                 <p class="text-sm text-muted-foreground">
-                    Consulta y da seguimiento a todas las solicitudes recibidas.
+                    Consulta y da seguimiento a todos los mensajes recibidos.
                 </p>
             </div>
         </div>
@@ -227,21 +213,6 @@ const hasActiveFilters = computed(
                         <SelectItem :value="ALL">Todos los tipos</SelectItem>
                         <SelectItem
                             v-for="opt in options.requestTypes"
-                            :key="opt.value"
-                            :value="opt.value"
-                            >{{ opt.label }}</SelectItem
-                        >
-                    </SelectContent>
-                </Select>
-
-                <Select v-model="senderType">
-                    <SelectTrigger class="w-full"
-                        ><SelectValue placeholder="Quién envía"
-                    /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="ALL">Todos</SelectItem>
-                        <SelectItem
-                            v-for="opt in options.senderTypes"
                             :key="opt.value"
                             :value="opt.value"
                             >{{ opt.label }}</SelectItem
@@ -321,7 +292,6 @@ const hasActiveFilters = computed(
                                 /></span>
                             </TableHead>
                             <TableHead>Tipo</TableHead>
-                            <TableHead>Quién envía</TableHead>
                             <TableHead
                                 class="cursor-pointer select-none"
                                 @click="toggleSort('department')"
@@ -374,13 +344,13 @@ const hasActiveFilters = computed(
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="requests.data.length === 0">
-                            <TableCell colspan="11" class="py-16 text-center">
+                            <TableCell colspan="10" class="py-16 text-center">
                                 <div
                                     class="flex flex-col items-center gap-2 text-muted-foreground"
                                 >
                                     <Inbox class="size-8" />
                                     <p class="text-sm">
-                                        No se encontraron solicitudes con estos
+                                        No se encontraron mensajes con estos
                                         filtros.
                                     </p>
                                 </div>
@@ -395,12 +365,9 @@ const hasActiveFilters = computed(
                                 item.folio
                             }}</TableCell>
                             <TableCell>{{ item.request_type_label }}</TableCell>
-                            <TableCell>{{
-                                item.sender_type_label ?? '—'
-                            }}</TableCell>
                             <TableCell>{{ item.department_label }}</TableCell>
                             <TableCell class="max-w-40 truncate">{{
-                                item.location
+                                item.location ?? '—'
                             }}</TableCell>
                             <TableCell
                                 ><UrgencyBadge

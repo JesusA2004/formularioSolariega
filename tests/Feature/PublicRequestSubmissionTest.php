@@ -11,25 +11,18 @@ test('the public form page loads', function () {
     $this->get(route('reportar.create'))->assertOk();
 });
 
-test('a visitor can submit a request with an attachment and receives a folio', function () {
+test('a collaborator can submit a message with an attachment and receives a folio', function () {
     Storage::fake('local');
     Mail::fake();
 
     $file = UploadedFile::fake()->image('evidencia.jpg');
 
     $response = $this->post(route('reportar.store'), [
-        'request_type' => 'queja',
-        'sender_type' => 'colaborador',
-        'is_anonymous' => '0',
         'full_name' => 'Juan Pérez',
         'department' => 'sistemas',
-        'location' => 'Planta principal',
+        'request_type' => 'queja',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
         'involved_people' => '',
-        'urgency_level' => 'alto',
-        'has_evidence' => '1',
-        'wants_follow_up' => '1',
-        'contact_info' => 'juan@example.com',
         'accepted_terms' => '1',
         'attachments' => [$file],
     ]);
@@ -39,6 +32,8 @@ test('a visitor can submit a request with an attachment and receives a folio', f
     $response->assertRedirect(route('reportar.exito', ['folio' => $request->folio]));
 
     expect($request->folio)->toMatch('/^BZ-\d{4}-\d{6}$/');
+    expect($request->full_name)->toBe('Juan Pérez');
+    expect($request->has_evidence)->toBeTrue();
     expect($request->attachments)->toHaveCount(1);
 
     Storage::disk('local')->assertExists($request->attachments->first()->file_path);
@@ -46,44 +41,28 @@ test('a visitor can submit a request with an attachment and receives a folio', f
     Mail::assertQueued(NewRequestNotification::class, fn ($mail) => $mail->request->is($request));
 });
 
-test('anonymous requests never store the name or contact info', function () {
+test('the full name is required', function () {
     Mail::fake();
 
-    $this->post(route('reportar.store'), [
-        'request_type' => 'sugerencia',
-        'sender_type' => 'cliente',
-        'is_anonymous' => '1',
-        'full_name' => 'Nombre que no debe guardarse',
+    $response = $this->post(route('reportar.store'), [
         'department' => 'operaciones',
-        'location' => 'Almacén',
+        'request_type' => 'sugerencia',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
-        'urgency_level' => 'bajo',
-        'has_evidence' => '0',
-        'wants_follow_up' => '0',
-        'contact_info' => 'no-deberia-guardarse@example.com',
         'accepted_terms' => '1',
     ]);
 
-    $request = BuzonRequest::firstOrFail();
-
-    expect($request->is_anonymous)->toBeTrue();
-    expect($request->full_name)->toBeNull();
-    expect($request->contact_info)->toBeNull();
+    $response->assertSessionHasErrors('full_name');
+    expect(BuzonRequest::count())->toBe(0);
 });
 
 test('the success page shows the folio without exposing sensitive data', function () {
     Mail::fake();
 
     $this->post(route('reportar.store'), [
-        'request_type' => 'otro',
-        'sender_type' => 'visitante',
-        'is_anonymous' => '1',
+        'full_name' => 'Ana López',
         'department' => 'otro',
-        'location' => 'Oficinas',
+        'request_type' => 'otro',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
-        'urgency_level' => 'medio',
-        'has_evidence' => '0',
-        'wants_follow_up' => '0',
         'accepted_terms' => '1',
     ]);
 
@@ -93,7 +72,7 @@ test('the success page shows the folio without exposing sensitive data', functio
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('public/ReportarExito')
+        ->component('public/Gracias')
         ->where('folio', $request->folio)
     );
 });
@@ -102,15 +81,10 @@ test('the public form is rate limited', function () {
     Mail::fake();
 
     $payload = [
-        'request_type' => 'queja',
-        'sender_type' => 'colaborador',
-        'is_anonymous' => '1',
+        'full_name' => 'Colaborador de prueba',
         'department' => 'sistemas',
-        'location' => 'Planta principal',
+        'request_type' => 'queja',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
-        'urgency_level' => 'bajo',
-        'has_evidence' => '0',
-        'wants_follow_up' => '0',
         'accepted_terms' => '1',
     ];
 

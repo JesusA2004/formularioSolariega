@@ -40,8 +40,8 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
-            { title: 'Solicitudes', href: solicitudes.index() },
-            { title: 'Detalle de solicitud', href: solicitudes.index() },
+            { title: 'Mensajes', href: solicitudes.index() },
+            { title: 'Detalle del mensaje', href: solicitudes.index() },
         ],
     },
 });
@@ -92,7 +92,7 @@ function formatDateTime(value: string | null) {
             <Button as-child variant="ghost" size="sm">
                 <Link :href="solicitudes.index()">
                     <ArrowLeft class="size-4" />
-                    Volver a solicitudes
+                    Volver a mensajes
                 </Link>
             </Button>
         </div>
@@ -111,9 +111,6 @@ function formatDateTime(value: string | null) {
                     </h1>
                     <p class="text-xs text-muted-foreground">
                         Enviada el {{ formatDateTime(request.created_at) }}
-                        <span v-if="request.sender_type_label">
-                            · {{ request.sender_type_label }}</span
-                        >
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -146,7 +143,7 @@ function formatDateTime(value: string | null) {
                             variant="outline"
                             class="border-gold/40 bg-gold/10 text-gold-foreground"
                         >
-                            Solicitud anónima
+                            Mensaje anónimo
                         </Badge>
                         <dl v-else class="grid gap-3 sm:grid-cols-2">
                             <div>
@@ -198,7 +195,7 @@ function formatDateTime(value: string | null) {
                                 Ubicación
                             </dt>
                             <dd class="text-sm font-medium">
-                                {{ request.location }}
+                                {{ request.location ?? 'No especificada' }}
                             </dd>
                         </div>
                         <div class="flex items-center gap-1.5 sm:col-span-2">
@@ -249,7 +246,7 @@ function formatDateTime(value: string | null) {
                             v-if="request.attachments.length === 0"
                             class="text-sm text-muted-foreground"
                         >
-                            No se adjuntaron archivos con esta solicitud.
+                            No se adjuntaron archivos con este mensaje.
                         </p>
                         <ul v-else class="grid gap-3 sm:grid-cols-2">
                             <li

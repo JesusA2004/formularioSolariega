@@ -9,14 +9,12 @@ use App\Http\Controllers\Admin\RequestAttachmentController;
 use App\Http\Controllers\Public\PublicRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/reportar')->name('home');
-
 Route::middleware('throttle:reportar')->group(function () {
-    Route::get('reportar', [PublicRequestController::class, 'create'])->name('reportar.create');
-    Route::post('reportar', [PublicRequestController::class, 'store'])->name('reportar.store');
+    Route::get('/', [PublicRequestController::class, 'create'])->name('reportar.create');
+    Route::post('/', [PublicRequestController::class, 'store'])->name('reportar.store');
 });
 
-Route::get('reportar/gracias/{folio}', [PublicRequestController::class, 'success'])->name('reportar.exito');
+Route::get('gracias/{folio}', [PublicRequestController::class, 'success'])->name('reportar.exito');
 
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

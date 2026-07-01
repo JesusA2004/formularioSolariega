@@ -14,7 +14,7 @@ withDefaults(
 <template>
     <div class="relative min-h-svh overflow-hidden bg-background">
         <div
-            class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[#10251B] via-[#17281f] to-transparent"
+            class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[#171717] via-[#232323] to-transparent"
         />
         <div
             class="pointer-events-none absolute -top-20 right-[15%] size-72 rounded-full bg-gold/20 blur-3xl"

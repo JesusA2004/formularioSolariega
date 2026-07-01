@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
-use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -29,7 +28,6 @@ class RequestFactory extends Factory
 
         return [
             'request_type' => $this->faker->randomElement(RequestType::cases())->value,
-            'sender_type' => $this->faker->randomElement(SenderType::cases())->value,
             'is_anonymous' => $isAnonymous,
             'full_name' => $isAnonymous ? null : $this->faker->name(),
             'department' => $this->faker->randomElement(Department::cases())->value,

@@ -1,15 +1,15 @@
 <x-mail::message>
-# Nueva solicitud recibida
+# Nuevo mensaje recibido
 
 Se ha registrado un nuevo mensaje en el Buzón Solariega de Solariega Cenit.
 
 | | |
 |---|---|
 | **Folio** | {{ $request->folio }} |
-| **Tipo de solicitud** | {{ $request->request_type->label() }} |
-| **Nivel de urgencia** | {{ $request->urgency_level->label() }} |
+| **Tipo de mensaje** | {{ $request->request_type->label() }} |
+| **Nivel de atención** | {{ $request->urgency_level->label() }} |
 | **Área / Departamento** | {{ \App\Enums\Department::tryFrom($request->department)?->label() ?? $request->department }} |
-| **Ubicación** | {{ $request->location }} |
+| **Ubicación** | {{ $request->location ?? 'No especificada' }} |
 | **Fecha aproximada del hecho** | {{ $request->incident_date?->format('d/m/Y') ?? 'No especificada' }} |
 | **Solicitud anónima** | {{ $request->is_anonymous ? 'Sí' : 'No' }} |
 @if (! $request->is_anonymous)

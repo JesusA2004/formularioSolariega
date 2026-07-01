@@ -31,7 +31,7 @@ const mainNavItems = computed<NavItem[]>(() => [
         icon: LayoutGrid,
     },
     {
-        title: 'Solicitudes',
+        title: 'Mensajes',
         href: solicitudes.index(),
         icon: Inbox,
     },

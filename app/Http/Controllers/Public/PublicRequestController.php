@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Public;
 
 use App\Enums\Department;
 use App\Enums\RequestType;
-use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequestRequest;
@@ -23,7 +22,7 @@ class PublicRequestController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('public/Reportar', [
+        return Inertia::render('public/Index', [
             'options' => $this->formOptions(),
         ]);
     }
@@ -36,7 +35,8 @@ class PublicRequestController extends Controller
         $buzonRequest = DB::transaction(function () use ($validated, $attachments, $request) {
             $buzonRequest = BuzonRequest::create([
                 ...collect($validated)->except('attachments')->all(),
-                'has_evidence' => $validated['has_evidence'] || ! empty($attachments),
+                'urgency_level' => UrgencyLevel::Medio->value,
+                'has_evidence' => ! empty($attachments),
                 'ip_address' => $request->ip(),
             ]);
 
@@ -73,7 +73,7 @@ class PublicRequestController extends Controller
     {
         BuzonRequest::where('folio', $folio)->firstOrFail();
 
-        return Inertia::render('public/ReportarExito', [
+        return Inertia::render('public/Gracias', [
             'folio' => $folio,
         ]);
     }
@@ -84,21 +84,11 @@ class PublicRequestController extends Controller
     private function formOptions(): array
     {
         return [
-            'requestTypes' => collect(RequestType::cases())
+            'requestTypes' => collect(RequestType::publicOptions())
                 ->map(fn (RequestType $type) => ['value' => $type->value, 'label' => $type->label()])
-                ->all(),
-            'senderTypes' => collect(SenderType::cases())
-                ->map(fn (SenderType $type) => ['value' => $type->value, 'label' => $type->label()])
                 ->all(),
             'departments' => collect(Department::cases())
                 ->map(fn (Department $department) => ['value' => $department->value, 'label' => $department->label()])
-                ->all(),
-            'urgencyLevels' => collect(UrgencyLevel::cases())
-                ->map(fn (UrgencyLevel $level) => [
-                    'value' => $level->value,
-                    'label' => $level->label(),
-                    'description' => $level->description(),
-                ])
                 ->all(),
         ];
     }

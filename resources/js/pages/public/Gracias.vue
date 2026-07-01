@@ -35,8 +35,8 @@ defineProps<{
                     </h2>
                     <p class="text-sm text-muted-foreground">
                         Gracias por compartir tu mensaje. Será revisado con
-                        atención y, si corresponde, se dará seguimiento por
-                        el área responsable.
+                        atención y confidencialidad por el área
+                        correspondiente.
                     </p>
                 </div>
 

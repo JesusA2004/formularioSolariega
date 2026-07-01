@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
-use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateRequestRequest;
@@ -22,7 +21,7 @@ class AdminRequestController extends Controller
     public function index(HttpRequest $request): Response
     {
         $query = BuzonRequest::query()->filter($request->only([
-            'search', 'status', 'request_type', 'sender_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence',
+            'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence',
         ]));
 
         $sort = $request->string('sort')->toString() ?: 'created_at';
@@ -44,8 +43,6 @@ class AdminRequestController extends Controller
                 'folio' => $r->folio,
                 'request_type' => $r->request_type->value,
                 'request_type_label' => $r->request_type->label(),
-                'sender_type' => $r->sender_type?->value,
-                'sender_type_label' => $r->sender_type?->label(),
                 'department' => $r->department,
                 'department_label' => Department::tryFrom($r->department)?->label() ?? $r->department,
                 'location' => $r->location,
@@ -62,7 +59,7 @@ class AdminRequestController extends Controller
         return Inertia::render('admin/solicitudes/Index', [
             'requests' => $requests,
             'filters' => $request->only([
-                'search', 'status', 'request_type', 'sender_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'sort', 'direction',
+                'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'sort', 'direction',
             ]),
             'options' => $this->filterOptions(),
         ]);
@@ -78,8 +75,6 @@ class AdminRequestController extends Controller
                 'folio' => $solicitud->folio,
                 'request_type' => $solicitud->request_type->value,
                 'request_type_label' => $solicitud->request_type->label(),
-                'sender_type' => $solicitud->sender_type?->value,
-                'sender_type_label' => $solicitud->sender_type?->label(),
                 'is_anonymous' => $solicitud->is_anonymous,
                 'full_name' => $solicitud->full_name,
                 'department' => $solicitud->department,
@@ -150,7 +145,6 @@ class AdminRequestController extends Controller
     {
         return [
             'requestTypes' => collect(RequestType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
-            'senderTypes' => collect(SenderType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
             'departments' => collect(Department::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
             'urgencyLevels' => collect(UrgencyLevel::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
             'statuses' => collect(RequestStatus::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),

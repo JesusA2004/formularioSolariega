@@ -10,6 +10,7 @@ enum Department: string implements LabeledEnum
     case RecursosHumanos = 'recursos_humanos';
     case Sistemas = 'sistemas';
     case Operaciones = 'operaciones';
+    case Produccion = 'produccion';
     case Otro = 'otro';
 
     public function label(): string
@@ -19,6 +20,7 @@ enum Department: string implements LabeledEnum
             self::RecursosHumanos => 'Recursos humanos',
             self::Sistemas => 'Sistemas',
             self::Operaciones => 'Operaciones',
+            self::Produccion => 'Producción',
             self::Otro => 'Otro',
         };
     }

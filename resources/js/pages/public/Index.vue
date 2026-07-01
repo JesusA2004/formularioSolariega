@@ -1,0 +1,315 @@
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { HeartHandshake, ShieldCheck, Sparkles } from '@lucide/vue';
+import { computed } from 'vue';
+import BrandMark from '@/components/BrandMark.vue';
+import InputError from '@/components/InputError.vue';
+import DatePickerField from '@/components/public/DatePickerField.vue';
+import FileDropzone from '@/components/public/FileDropzone.vue';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
+import { store } from '@/routes/reportar';
+import type { FormOptions } from '@/types/buzon';
+
+const props = defineProps<{
+    options: FormOptions;
+}>();
+
+const form = useForm({
+    full_name: '',
+    department: '',
+    request_type: '',
+    incident_date: null as string | null,
+    involved_people: '',
+    description: '',
+    attachments: [] as File[],
+    accepted_terms: false,
+});
+
+const canSubmit = computed(
+    () =>
+        form.full_name.trim() !== '' &&
+        form.department !== '' &&
+        form.request_type !== '' &&
+        form.description.trim().length >= 20 &&
+        form.accepted_terms,
+);
+
+function submit() {
+    form.post(store.url(), { forceFormData: true });
+}
+</script>
+
+<template>
+    <Head>
+        <meta
+            name="description"
+            content="Canal interno de atención de Solariega Cenit para compartir comentarios, sugerencias y situaciones que requieran seguimiento de forma confidencial y organizada."
+        />
+        <meta
+            name="keywords"
+            content="Buzón Solariega, Solariega Cenit, comentarios, sugerencias, seguimiento, atención interna, colaboradores"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://buzon.solariegacenit.com/" />
+
+        <meta property="og:title" content="Buzón Solariega" />
+        <meta
+            property="og:description"
+            content="Canal interno de atención de Solariega Cenit para compartir comentarios y sugerencias de forma confidencial."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://buzon.solariegacenit.com/" />
+        <meta property="og:site_name" content="Buzón Solariega" />
+    </Head>
+
+    <div class="min-h-svh bg-background lg:grid lg:grid-cols-[42%_58%]">
+        <!-- Left column: institutional visual block -->
+        <div
+            class="relative flex flex-col justify-between gap-10 overflow-hidden bg-[#171717] px-8 py-12 text-marfil sm:px-12 lg:min-h-svh lg:px-14 lg:py-16"
+        >
+            <!--
+                Placeholder for future photography. Replace the gradient div
+                below with an <img class="absolute inset-0 size-full object-cover" />
+                when the real image is ready — the overlay/gradient/text stay on top.
+            -->
+            <div class="absolute inset-0">
+                <div
+                    class="size-full bg-gradient-to-br from-[#1E1E1E] via-[#232323] to-[#171717]"
+                />
+            </div>
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"
+            />
+            <div
+                class="pointer-events-none absolute -top-16 -right-16 size-72 rounded-full bg-gold/15 blur-3xl"
+            />
+            <div
+                class="pointer-events-none absolute inset-x-10 bottom-24 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
+            />
+
+            <div
+                class="relative z-10 flex items-center gap-3 animate-in duration-700 fade-in slide-in-from-top-4"
+            >
+                <BrandMark class="size-11 text-lg" />
+                <span
+                    class="text-xs font-medium tracking-widest text-gold uppercase"
+                    >Solariega Cenit</span
+                >
+            </div>
+
+            <div
+                class="relative z-10 max-w-md space-y-5 animate-in duration-700 fade-in slide-in-from-bottom-4"
+            >
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1 text-xs font-medium tracking-wide text-gold uppercase"
+                >
+                    Canal interno de atención
+                </span>
+
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-semibold sm:text-4xl">
+                        Buzón Solariega
+                    </h1>
+                    <p class="text-lg font-medium text-marfil/90">
+                        Queremos escucharte
+                    </p>
+                    <p class="text-sm text-marfil/70">
+                        Comparte tus comentarios, sugerencias o cualquier
+                        situación que requiera atención. Cada mensaje será
+                        tratado con seriedad, confidencialidad y respeto.
+                    </p>
+                </div>
+
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-center gap-2.5">
+                        <ShieldCheck class="size-4 shrink-0 text-gold" />
+                        Atención confidencial
+                    </li>
+                    <li class="flex items-center gap-2.5">
+                        <Sparkles class="size-4 shrink-0 text-gold" />
+                        Seguimiento responsable
+                    </li>
+                    <li class="flex items-center gap-2.5">
+                        <HeartHandshake class="size-4 shrink-0 text-gold" />
+                        Mejora continua
+                    </li>
+                </ul>
+            </div>
+
+            <p class="relative z-10 text-xs text-marfil/50">
+                © {{ new Date().getFullYear() }} Solariega Cenit
+            </p>
+        </div>
+
+        <!-- Right column: form -->
+        <div
+            class="flex flex-col justify-center px-4 py-10 sm:px-8 lg:px-14 lg:py-16"
+        >
+            <div
+                class="mx-auto w-full max-w-xl animate-in duration-700 fade-in slide-in-from-bottom-4 lg:max-w-2xl"
+            >
+                <div
+                    class="mb-6 rounded-2xl border border-gold/30 bg-gold/5 p-4"
+                >
+                    <p class="text-sm font-medium">
+                        Confidencialidad y seguimiento responsable
+                    </p>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        Tu información será tratada con confidencialidad por
+                        el área de Recursos Humanos y, en caso necesario, con
+                        la persona correspondiente para dar seguimiento
+                        adecuado. El objetivo de este espacio es escuchar,
+                        atender y mejorar, cuidando siempre el respeto hacia
+                        cada colaborador.
+                    </p>
+                </div>
+
+                <form class="space-y-5" @submit.prevent="submit">
+                    <div class="grid gap-5 sm:grid-cols-2">
+                        <div class="space-y-2">
+                            <Label for="full_name">Nombre completo</Label>
+                            <Input
+                                id="full_name"
+                                v-model="form.full_name"
+                                placeholder="Escribe tu nombre completo"
+                            />
+                            <InputError :message="form.errors.full_name" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label>Área o departamento</Label>
+                            <Select v-model="form.department">
+                                <SelectTrigger class="w-full">
+                                    <SelectValue placeholder="Selecciona un área" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="opt in options.departments"
+                                        :key="opt.value"
+                                        :value="opt.value"
+                                        >{{ opt.label }}</SelectItem
+                                    >
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.department" />
+                        </div>
+                    </div>
+
+                    <div class="grid gap-5 sm:grid-cols-2">
+                        <div class="space-y-2">
+                            <Label>Tipo de mensaje</Label>
+                            <Select v-model="form.request_type">
+                                <SelectTrigger class="w-full">
+                                    <SelectValue
+                                        placeholder="Selecciona una opción"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="opt in options.requestTypes"
+                                        :key="opt.value"
+                                        :value="opt.value"
+                                        >{{ opt.label }}</SelectItem
+                                    >
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.request_type" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label>Fecha aproximada</Label>
+                            <DatePickerField
+                                v-model="form.incident_date"
+                                placeholder="Opcional"
+                            />
+                            <InputError :message="form.errors.incident_date" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="involved_people"
+                            >Personas relacionadas</Label
+                        >
+                        <Input
+                            id="involved_people"
+                            v-model="form.involved_people"
+                            placeholder="Opcional"
+                        />
+                        <InputError
+                            :message="form.errors.involved_people"
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="description">Cuéntanos tu mensaje</Label>
+                        <p class="text-xs text-muted-foreground">
+                            Comparte con la mayor claridad posible lo que
+                            deseas comunicar. Si lo consideras necesario,
+                            puedes mencionar la fecha aproximada y las
+                            personas relacionadas.
+                        </p>
+                        <Textarea
+                            id="description"
+                            v-model="form.description"
+                            rows="5"
+                            placeholder="Escribe aquí tu mensaje..."
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Mínimo 20 caracteres.
+                            {{ form.description.length }}/5000
+                        </p>
+                        <InputError :message="form.errors.description" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label>Adjuntar evidencia</Label>
+                        <FileDropzone v-model="form.attachments" />
+                        <InputError :message="form.errors.attachments" />
+                    </div>
+
+                    <div
+                        class="flex items-start gap-3 rounded-lg border bg-muted/40 p-4"
+                    >
+                        <Checkbox
+                            id="accepted_terms"
+                            v-model="form.accepted_terms"
+                            class="mt-0.5"
+                        />
+                        <Label
+                            for="accepted_terms"
+                            class="text-sm leading-relaxed font-normal"
+                        >
+                            Confirmo que la información proporcionada es
+                            correcta según mi conocimiento y entiendo que
+                            será tratada de forma confidencial por el área de
+                            Recursos Humanos para su debida atención y
+                            seguimiento.
+                        </Label>
+                    </div>
+                    <InputError :message="form.errors.accepted_terms" />
+
+                    <Button
+                        type="submit"
+                        class="w-full"
+                        :disabled="!canSubmit || form.processing"
+                    >
+                        <Spinner v-if="form.processing" />
+                        Enviar mensaje
+                    </Button>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
