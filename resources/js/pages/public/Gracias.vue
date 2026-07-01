@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { CheckCircle2 } from '@lucide/vue';
+import { CheckCircle2, MessageCircleHeart } from '@lucide/vue';
 import PublicPageShell from '@/components/public/PublicPageShell.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { create } from '@/routes/reportar';
-
-defineProps<{
-    folio: string;
-}>();
 </script>
 
 <template>
@@ -41,23 +37,17 @@ defineProps<{
                 </div>
 
                 <div
-                    class="w-full rounded-lg border border-dashed border-gold/40 bg-gold/5 px-4 py-3"
+                    class="flex w-full items-start gap-3 rounded-xl border border-gold/30 bg-gold/5 p-4 text-left"
                 >
-                    <p
-                        class="text-xs tracking-wide text-muted-foreground uppercase"
-                    >
-                        Folio de seguimiento
-                    </p>
-                    <p
-                        class="font-mono text-lg font-semibold tracking-wide text-primary"
-                    >
-                        {{ folio }}
+                    <MessageCircleHeart
+                        class="mt-0.5 size-5 shrink-0 text-gold"
+                    />
+                    <p class="text-sm text-muted-foreground">
+                        Si se requiere más información, Recursos Humanos se
+                        pondrá en contacto contigo para dar el seguimiento
+                        correspondiente.
                     </p>
                 </div>
-
-                <p class="text-xs text-muted-foreground">
-                    Guarda este folio si deseas dar seguimiento a tu mensaje.
-                </p>
 
                 <Button as-child class="mt-2 w-full">
                     <Link :href="create()">Enviar otro mensaje</Link>

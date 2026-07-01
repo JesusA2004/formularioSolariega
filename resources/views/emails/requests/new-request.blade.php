@@ -11,11 +11,8 @@ Se ha registrado un nuevo mensaje en el Buzón Solariega de Solariega Cenit.
 | **Área / Departamento** | {{ \App\Enums\Department::tryFrom($request->department)?->label() ?? $request->department }} |
 | **Ubicación** | {{ $request->location ?? 'No especificada' }} |
 | **Fecha aproximada del hecho** | {{ $request->incident_date?->format('d/m/Y') ?? 'No especificada' }} |
-| **Solicitud anónima** | {{ $request->is_anonymous ? 'Sí' : 'No' }} |
-@if (! $request->is_anonymous)
 | **Nombre** | {{ $request->full_name ?? 'No proporcionado' }} |
 | **Contacto** | {{ $request->contact_info ?? 'No proporcionado' }} |
-@endif
 | **Personas involucradas** | {{ $request->involved_people ?? 'No especificadas' }} |
 | **Fecha de envío** | {{ $request->created_at->format('d/m/Y H:i') }} |
 

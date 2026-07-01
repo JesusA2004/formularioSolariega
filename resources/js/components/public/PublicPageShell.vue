@@ -30,15 +30,10 @@ withDefaults(
             ]"
         >
             <header
-                class="mb-6 flex flex-col items-center gap-3 text-center text-marfil animate-in duration-700 fade-in slide-in-from-top-4"
+                class="mb-6 flex animate-in flex-col items-center gap-3 text-center text-marfil duration-700 fade-in slide-in-from-top-4"
             >
                 <BrandMark class="size-14 text-xl shadow-lg" />
                 <div class="space-y-1.5">
-                    <p
-                        class="text-xs font-medium tracking-widest text-gold uppercase"
-                    >
-                        Solariega Cenit
-                    </p>
                     <h1 class="text-2xl font-semibold sm:text-3xl">
                         <slot name="title">Buzón Solariega</slot>
                     </h1>

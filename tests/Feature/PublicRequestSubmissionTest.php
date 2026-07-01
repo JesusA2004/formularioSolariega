@@ -11,7 +11,7 @@ test('the public form page loads', function () {
     $this->get(route('reportar.create'))->assertOk();
 });
 
-test('a collaborator can submit a message with an attachment and receives a folio', function () {
+test('a collaborator can submit a message with an attachment', function () {
     Storage::fake('local');
     Mail::fake();
 
@@ -19,6 +19,7 @@ test('a collaborator can submit a message with an attachment and receives a foli
 
     $response = $this->post(route('reportar.store'), [
         'full_name' => 'Juan Pérez',
+        'contact_info' => 'juan@example.com',
         'department' => 'sistemas',
         'request_type' => 'queja',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
@@ -29,10 +30,11 @@ test('a collaborator can submit a message with an attachment and receives a foli
 
     $request = BuzonRequest::firstOrFail();
 
-    $response->assertRedirect(route('reportar.exito', ['folio' => $request->folio]));
+    $response->assertRedirect(route('reportar.exito'));
 
     expect($request->folio)->toMatch('/^BZ-\d{4}-\d{6}$/');
     expect($request->full_name)->toBe('Juan Pérez');
+    expect($request->contact_info)->toBe('juan@example.com');
     expect($request->has_evidence)->toBeTrue();
     expect($request->attachments)->toHaveCount(1);
 
@@ -45,6 +47,7 @@ test('the full name is required', function () {
     Mail::fake();
 
     $response = $this->post(route('reportar.store'), [
+        'contact_info' => 'juan@example.com',
         'department' => 'operaciones',
         'request_type' => 'sugerencia',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
@@ -55,25 +58,39 @@ test('the full name is required', function () {
     expect(BuzonRequest::count())->toBe(0);
 });
 
-test('the success page shows the folio without exposing sensitive data', function () {
+test('the contact info is required', function () {
+    Mail::fake();
+
+    $response = $this->post(route('reportar.store'), [
+        'full_name' => 'Ana López',
+        'department' => 'operaciones',
+        'request_type' => 'sugerencia',
+        'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
+        'accepted_terms' => '1',
+    ]);
+
+    $response->assertSessionHasErrors('contact_info');
+    expect(BuzonRequest::count())->toBe(0);
+});
+
+test('the success page does not expose the folio', function () {
     Mail::fake();
 
     $this->post(route('reportar.store'), [
         'full_name' => 'Ana López',
+        'contact_info' => '777 123 4567',
         'department' => 'otro',
         'request_type' => 'otro',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',
         'accepted_terms' => '1',
     ]);
 
-    $request = BuzonRequest::firstOrFail();
-
-    $response = $this->get(route('reportar.exito', ['folio' => $request->folio]));
+    $response = $this->get(route('reportar.exito'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('public/Gracias')
-        ->where('folio', $request->folio)
+        ->missing('folio')
     );
 });
 
@@ -82,6 +99,7 @@ test('the public form is rate limited', function () {
 
     $payload = [
         'full_name' => 'Colaborador de prueba',
+        'contact_info' => 'colaborador@example.com',
         'department' => 'sistemas',
         'request_type' => 'queja',
         'description' => 'Esta es una descripción de prueba con más de veinte caracteres.',

@@ -20,6 +20,7 @@ class StoreRequestRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:255'],
+            'contact_info' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', 'max:255'],
             'request_type' => ['required', 'string', Rule::in(array_column(RequestType::cases(), 'value'))],
             'incident_date' => ['nullable', 'date', 'before_or_equal:today'],
@@ -42,6 +43,8 @@ class StoreRequestRequest extends FormRequest
     {
         return [
             'full_name.required' => 'Escribe tu nombre completo.',
+            'contact_info.required' => 'Indica un correo o teléfono de contacto para poder dar seguimiento.',
+            'contact_info.max' => 'El contacto no debe superar los 255 caracteres.',
             'department.required' => 'Indica el área o departamento.',
             'request_type.required' => 'Selecciona el tipo de mensaje.',
             'request_type.in' => 'El tipo de mensaje seleccionado no es válido.',

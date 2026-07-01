@@ -65,16 +65,12 @@ class PublicRequestController extends Controller
             ]);
         }
 
-        return to_route('reportar.exito', ['folio' => $buzonRequest->folio]);
+        return to_route('reportar.exito');
     }
 
-    public function success(string $folio): Response
+    public function success(): Response
     {
-        BuzonRequest::where('folio', $folio)->firstOrFail();
-
-        return Inertia::render('public/Gracias', [
-            'folio' => $folio,
-        ]);
+        return Inertia::render('public/Gracias');
     }
 
     /**

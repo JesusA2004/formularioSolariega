@@ -14,7 +14,7 @@ Route::middleware('throttle:reportar')->group(function () {
     Route::post('/', [PublicRequestController::class, 'store'])->name('reportar.store');
 });
 
-Route::get('gracias/{folio}', [PublicRequestController::class, 'success'])->name('reportar.exito');
+Route::get('gracias', [PublicRequestController::class, 'success'])->name('reportar.exito');
 
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

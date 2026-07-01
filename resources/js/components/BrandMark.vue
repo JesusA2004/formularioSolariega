@@ -10,14 +10,9 @@ withDefaults(
 </script>
 
 <template>
-    <div
-        :class="
-            cn(
-                'flex aspect-square items-center justify-center rounded-xl bg-gradient-to-br from-[#232323] to-[#171717] font-serif font-semibold text-[#FAF9F5] shadow-sm ring-1 ring-[#D4AF37]/50',
-                $props.class,
-            )
-        "
-    >
-        SC
-    </div>
+    <img
+        src="/images/logoLetras.png"
+        alt="Solariega Cenit"
+        class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
+    />
 </template>

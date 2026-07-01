@@ -28,6 +28,7 @@ const heroImageMissing = ref(false);
 
 const form = useForm({
     full_name: '',
+    contact_info: '',
     department: '',
     request_type: '',
     incident_date: null as string | null,
@@ -40,6 +41,7 @@ const form = useForm({
 const canSubmit = computed(
     () =>
         form.full_name.trim() !== '' &&
+        form.contact_info.trim() !== '' &&
         form.department !== '' &&
         form.request_type !== '' &&
         form.description.trim().length >= 20 &&
@@ -173,6 +175,28 @@ function submit() {
                         </div>
 
                         <div class="space-y-2">
+                            <Label for="contact_info"
+                                >Correo o teléfono de contacto</Label
+                            >
+                            <Input
+                                id="contact_info"
+                                v-model="form.contact_info"
+                                placeholder="Ejemplo: correo@empresa.com o 777 123 4567"
+                                class="transition-colors hover:border-gold/60"
+                            />
+                            <p class="text-xs text-muted-foreground">
+                                Este dato será utilizado únicamente si
+                                Recursos Humanos necesita comunicarse contigo
+                                para dar seguimiento.
+                            </p>
+                            <InputError :message="form.errors.contact_info" />
+                        </div>
+                    </div>
+
+                    <div
+                        class="grid animate-in gap-5 delay-100 duration-500 fade-in slide-in-from-bottom-2 sm:grid-cols-2"
+                    >
+                        <div class="space-y-2">
                             <Label for="department">Área o departamento</Label>
                             <Input
                                 id="department"
@@ -182,11 +206,7 @@ function submit() {
                             />
                             <InputError :message="form.errors.department" />
                         </div>
-                    </div>
 
-                    <div
-                        class="grid animate-in gap-5 delay-100 duration-500 fade-in slide-in-from-bottom-2 sm:grid-cols-2"
-                    >
                         <div class="space-y-2">
                             <Label>Tipo de mensaje</Label>
                             <Select v-model="form.request_type">
@@ -208,7 +228,11 @@ function submit() {
                             </Select>
                             <InputError :message="form.errors.request_type" />
                         </div>
+                    </div>
 
+                    <div
+                        class="grid animate-in gap-5 delay-150 duration-500 fade-in slide-in-from-bottom-2 sm:grid-cols-2"
+                    >
                         <div class="space-y-2">
                             <Label>Fecha aproximada</Label>
                             <DatePickerField
@@ -217,21 +241,21 @@ function submit() {
                             />
                             <InputError :message="form.errors.incident_date" />
                         </div>
-                    </div>
 
-                    <div
-                        class="animate-in space-y-2 delay-150 duration-500 fade-in slide-in-from-bottom-2"
-                    >
-                        <Label for="involved_people"
-                            >Personas relacionadas</Label
-                        >
-                        <Input
-                            id="involved_people"
-                            v-model="form.involved_people"
-                            placeholder="Opcional"
-                            class="transition-colors hover:border-gold/60"
-                        />
-                        <InputError :message="form.errors.involved_people" />
+                        <div class="space-y-2">
+                            <Label for="involved_people"
+                                >Personas relacionadas</Label
+                            >
+                            <Input
+                                id="involved_people"
+                                v-model="form.involved_people"
+                                placeholder="Opcional"
+                                class="transition-colors hover:border-gold/60"
+                            />
+                            <InputError
+                                :message="form.errors.involved_people"
+                            />
+                        </div>
                     </div>
 
                     <div
