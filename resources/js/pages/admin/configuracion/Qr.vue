@@ -36,7 +36,7 @@ onMounted(async () => {
         await QRCode.toCanvas(canvasRef.value, props.publicUrl, {
             width: 320,
             margin: 2,
-            color: { dark: '#064e3b', light: '#ffffff' },
+            color: { dark: '#10251B', light: '#ffffff' },
         });
     }
 });
@@ -91,7 +91,7 @@ function downloadPng() {
                         class="font-mono text-xs"
                     />
                     <Button variant="outline" @click="copyLink">
-                        <Check v-if="copied" class="size-4 text-emerald-600" />
+                        <Check v-if="copied" class="size-4 text-primary" />
                         <Copy v-else class="size-4" />
                         {{ copied ? 'Copiado' : 'Copiar' }}
                     </Button>

@@ -8,11 +8,10 @@ const props = defineProps<{
 }>();
 
 const classes: Record<string, string> = {
-    bajo: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-900',
-    medio: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-900',
-    alto: 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-900',
-    critico:
-        'bg-red-100 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-900',
+    bajo: 'bg-primary/10 text-primary border-primary/30',
+    medio: 'bg-gold/15 text-gold-foreground border-gold/40',
+    alto: 'bg-terracota/15 text-terracota border-terracota/30',
+    critico: 'bg-destructive/10 text-destructive border-destructive/30',
 };
 </script>
 

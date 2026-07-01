@@ -141,7 +141,7 @@ function formatDateTime(value: string | null) {
                         <Badge
                             v-if="request.is_anonymous"
                             variant="outline"
-                            class="border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300"
+                            class="border-gold/40 bg-gold/10 text-gold-foreground"
                         >
                             Solicitud anónima
                         </Badge>
@@ -381,7 +381,7 @@ function formatDateTime(value: string | null) {
                     <CardContent class="pt-6 text-sm">
                         <Badge
                             variant="outline"
-                            class="border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300"
+                            class="border-cafe/30 bg-cafe/10 text-cafe"
                         >
                             Solicita seguimiento
                         </Badge>

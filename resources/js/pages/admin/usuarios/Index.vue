@@ -206,8 +206,8 @@ function confirmDelete() {
                                     variant="outline"
                                     :class="
                                         user.is_active
-                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300'
-                                            : 'border-gray-200 bg-gray-50 text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400'
+                                            ? 'border-primary/30 bg-primary/10 text-primary'
+                                            : 'border-border bg-muted text-muted-foreground'
                                     "
                                 >
                                     {{ user.is_active ? 'Activo' : 'Inactivo' }}

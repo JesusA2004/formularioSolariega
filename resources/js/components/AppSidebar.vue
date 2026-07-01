@@ -69,11 +69,11 @@ const mainNavItems = computed<NavItem[]>(() => [
                                 class="grid flex-1 text-left text-sm leading-tight"
                             >
                                 <span class="truncate font-semibold"
-                                    >Solariega Cenit</span
+                                    >Buzón Solariega</span
                                 >
                                 <span
                                     class="truncate text-xs text-sidebar-foreground/70"
-                                    >Buzón interno</span
+                                    >Solariega Cenit</span
                                 >
                             </span>
                         </Link>

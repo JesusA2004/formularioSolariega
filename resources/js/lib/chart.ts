@@ -36,12 +36,12 @@ ChartJS.defaults.color = 'oklch(0.55 0.01 0)';
 export { ChartJS };
 
 export const chartPalette = [
-    '#059669',
-    '#f59e0b',
-    '#0284c7',
-    '#ef4444',
-    '#8b5cf6',
-    '#64748b',
-    '#ec4899',
-    '#14b8a6',
+    '#283B2A',
+    '#C6A45A',
+    '#9A6242',
+    '#6B4A2F',
+    '#A23E2E',
+    '#10251B',
+    '#D9BF7A',
+    '#8a8574',
 ];

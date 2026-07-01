@@ -382,7 +382,7 @@ const hasActiveFilters = computed(
                             <TableCell>
                                 <span
                                     v-if="item.is_anonymous"
-                                    class="text-xs font-medium text-amber-700 dark:text-amber-400"
+                                    class="text-xs font-medium text-gold-foreground"
                                     >Sí</span
                                 >
                                 <span
@@ -394,7 +394,7 @@ const hasActiveFilters = computed(
                             <TableCell>
                                 <Paperclip
                                     v-if="item.has_evidence"
-                                    class="size-4 text-emerald-600"
+                                    class="size-4 text-primary"
                                 />
                                 <span
                                     v-else
