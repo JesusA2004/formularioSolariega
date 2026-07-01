@@ -1,23 +1,29 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import {
-    AlertOctagon,
-    ClipboardList,
+    CalendarClock,
     Eye,
-    EyeOff,
     FileSpreadsheet,
     FileText,
+    FolderCheck,
+    MessagesSquare,
     Paperclip,
     RotateCcw,
+    Search,
     Table as TableIcon,
 } from '@lucide/vue';
-import { ref, watch } from 'vue';
-import { Bar, Doughnut } from 'vue-chartjs';
+import type { ApexChartEventOpts, ApexOptions } from 'apexcharts';
+import { computed, ref, watch } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
 import ChartCard from '@/components/admin/ChartCard.vue';
+import ChartEmptyState from '@/components/admin/ChartEmptyState.vue';
+import ChartSkeleton from '@/components/admin/ChartSkeleton.vue';
+import EvidenceBadge from '@/components/admin/EvidenceBadge.vue';
 import PaginationBar from '@/components/admin/PaginationBar.vue';
 import StatCard from '@/components/admin/StatCard.vue';
 import DatePickerField from '@/components/public/DatePickerField.vue';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -33,9 +39,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useMounted } from '@/composables/useMounted';
 import { chartPalette } from '@/lib/chart';
 import { dashboard } from '@/routes';
 import reportes from '@/routes/reportes';
+import solicitudes from '@/routes/solicitudes';
 import type {
     ChartPoint,
     OptionItem,
@@ -58,45 +66,45 @@ const props = defineProps<{
     options: {
         requestTypes: OptionItem[];
         departments: OptionItem[];
-        urgencyLevels: OptionItem[];
         statuses: OptionItem[];
     };
     summary: {
         total: number;
-        criticas: number;
-        anonimas: number;
+        pendientes: number;
         con_evidencia: number;
+        cerrados: number;
     };
     charts: {
         byType: ChartPoint[];
-        byUrgency: ChartPoint[];
         byDepartment: ChartPoint[];
         byStatus: ChartPoint[];
+        byEvidence: ChartPoint[];
     };
     requests: Paginated<RequestSummary>;
 }>();
 
+const isMounted = useMounted();
+
 const ALL = 'all';
 
+const search = ref(props.filters.search ?? '');
 const dateFrom = ref<string | null>(props.filters.date_from ?? null);
 const dateTo = ref<string | null>(props.filters.date_to ?? null);
 const status = ref(props.filters.status ?? ALL);
 const requestType = ref(props.filters.request_type ?? ALL);
-const urgencyLevel = ref(props.filters.urgency_level ?? ALL);
 const department = ref(props.filters.department ?? ALL);
-const isAnonymous = ref(props.filters.is_anonymous ?? ALL);
 const hasEvidence = ref(props.filters.has_evidence ?? ALL);
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 function currentFilters() {
     return {
+        search: search.value || undefined,
         date_from: dateFrom.value || undefined,
         date_to: dateTo.value || undefined,
         status: status.value === ALL ? undefined : status.value,
         request_type: requestType.value === ALL ? undefined : requestType.value,
-        urgency_level:
-            urgencyLevel.value === ALL ? undefined : urgencyLevel.value,
         department: department.value === ALL ? undefined : department.value,
-        is_anonymous: isAnonymous.value === ALL ? undefined : isAnonymous.value,
         has_evidence: hasEvidence.value === ALL ? undefined : hasEvidence.value,
     };
 }
@@ -108,28 +116,23 @@ function applyFilters() {
     });
 }
 
+watch(search, () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyFilters, 350);
+});
+
 watch(
-    [
-        dateFrom,
-        dateTo,
-        status,
-        requestType,
-        urgencyLevel,
-        department,
-        isAnonymous,
-        hasEvidence,
-    ],
+    [dateFrom, dateTo, status, requestType, department, hasEvidence],
     applyFilters,
 );
 
 function clearFilters() {
+    search.value = '';
     dateFrom.value = null;
     dateTo.value = null;
     status.value = ALL;
     requestType.value = ALL;
-    urgencyLevel.value = ALL;
     department.value = ALL;
-    isAnonymous.value = ALL;
     hasEvidence.value = ALL;
     applyFilters();
 }
@@ -138,53 +141,105 @@ function exportUrl(base: { url: (options?: RouteQueryOptions) => string }) {
     return base.url({ query: currentFilters() });
 }
 
-function barData(points: ChartPoint[]) {
-    return {
-        labels: points.map((p) => p.label),
-        datasets: [
-            {
-                data: points.map((p) => p.value),
-                backgroundColor: chartPalette,
-                borderRadius: 6,
-                maxBarThickness: 36,
-            },
-        ],
+function hasData(points: ChartPoint[]) {
+    return points.some((p) => p.value > 0);
+}
+
+function goToList(params: Record<string, string>) {
+    router.visit(solicitudes.index.url({ query: params }));
+}
+
+function makeSelectHandler(points: ChartPoint[], param: string) {
+    return (
+        _event: unknown,
+        _chart: unknown,
+        options?: ApexChartEventOpts,
+    ) => {
+        const point =
+            options?.dataPointIndex !== undefined
+                ? points[options.dataPointIndex]
+                : undefined;
+
+        if (point?.key !== undefined) {
+            goToList({ [param]: point.key });
+        }
     };
 }
 
-function doughnutData(points: ChartPoint[]) {
-    return {
-        labels: points.map((p) => p.label),
-        datasets: [
-            {
-                data: points.map((p) => p.value),
-                backgroundColor: chartPalette,
-                borderWidth: 0,
-            },
-        ],
-    };
-}
+const statusColors = ['#3B82F6', '#D4AF37', '#22C55E', '#64748B', '#EF4444'];
+const evidenceColors = ['#8B5CF6', '#64748B'];
 
-const baseOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-        x: { grid: { display: false } },
-        y: { beginAtZero: true, ticks: { precision: 0 } },
+const typeSeries = computed(() => [
+    { name: 'Mensajes', data: props.charts.byType.map((p) => p.value) },
+]);
+
+const typeOptions = computed<ApexOptions>(() => ({
+    chart: {
+        type: 'bar',
+        toolbar: { show: false },
+        fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        events: { dataPointSelection: makeSelectHandler(props.charts.byType, 'request_type') },
     },
-};
+    plotOptions: { bar: { distributed: true, borderRadius: 6, columnWidth: '55%' } },
+    colors: chartPalette,
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    xaxis: { categories: props.charts.byType.map((p) => p.label) },
+}));
 
-const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'bottom' as const,
-            labels: { boxWidth: 10, font: { size: 11 } },
+const departmentSeries = computed(() => [
+    { name: 'Mensajes', data: props.charts.byDepartment.map((p) => p.value) },
+]);
+
+const departmentOptions = computed<ApexOptions>(() => ({
+    chart: {
+        type: 'bar',
+        toolbar: { show: false },
+        fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        events: {
+            dataPointSelection: makeSelectHandler(props.charts.byDepartment, 'department'),
         },
     },
-};
+    plotOptions: {
+        bar: { horizontal: true, distributed: true, borderRadius: 6, barHeight: '60%' },
+    },
+    colors: chartPalette,
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    xaxis: { categories: props.charts.byDepartment.map((p) => p.label) },
+}));
+
+const statusSeries = computed(() => props.charts.byStatus.map((p) => p.value));
+
+const statusOptions = computed<ApexOptions>(() => ({
+    chart: {
+        type: 'donut',
+        fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        events: { dataPointSelection: makeSelectHandler(props.charts.byStatus, 'status') },
+    },
+    labels: props.charts.byStatus.map((p) => p.label),
+    colors: statusColors,
+    legend: { position: 'bottom' },
+    dataLabels: { enabled: false },
+    plotOptions: { pie: { donut: { size: '70%' } } },
+}));
+
+const evidenceSeries = computed(() => props.charts.byEvidence.map((p) => p.value));
+
+const evidenceOptions = computed<ApexOptions>(() => ({
+    chart: {
+        type: 'donut',
+        fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        events: {
+            dataPointSelection: makeSelectHandler(props.charts.byEvidence, 'has_evidence'),
+        },
+    },
+    labels: props.charts.byEvidence.map((p) => p.label),
+    colors: evidenceColors,
+    legend: { position: 'bottom' },
+    dataLabels: { enabled: false },
+    plotOptions: { pie: { donut: { size: '70%' } } },
+}));
 </script>
 
 <template>
@@ -192,12 +247,12 @@ const doughnutOptions = {
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <div
-            class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"
+            class="flex animate-in flex-col justify-between gap-2 fade-in slide-in-from-bottom-2 duration-500 sm:flex-row sm:items-center"
         >
             <div>
-                <h1 class="text-2xl font-semibold">Reportes</h1>
+                <h1 class="text-3xl font-semibold">Reportes</h1>
                 <p class="text-sm text-muted-foreground">
-                    Analiza las solicitudes filtrando por el criterio que
+                    Analiza los mensajes filtrando por el criterio que
                     necesites.
                 </p>
             </div>
@@ -220,8 +275,21 @@ const doughnutOptions = {
             </div>
         </div>
 
-        <div class="rounded-xl border bg-card p-4">
+        <div
+            class="animate-in rounded-2xl border bg-card p-4 fade-in slide-in-from-bottom-2 duration-500"
+        >
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="relative sm:col-span-2">
+                    <Search
+                        class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                    />
+                    <Input
+                        v-model="search"
+                        placeholder="Buscar por nombre, contacto, folio, descripción..."
+                        class="pl-9"
+                    />
+                </div>
+
                 <div class="space-y-1.5">
                     <p class="text-xs font-medium text-muted-foreground">
                         Desde
@@ -249,21 +317,6 @@ const doughnutOptions = {
                         <SelectItem :value="ALL">Todos los estados</SelectItem>
                         <SelectItem
                             v-for="opt in options.statuses"
-                            :key="opt.value"
-                            :value="opt.value"
-                            >{{ opt.label }}</SelectItem
-                        >
-                    </SelectContent>
-                </Select>
-
-                <Select v-model="urgencyLevel">
-                    <SelectTrigger class="w-full"
-                        ><SelectValue placeholder="Urgencia"
-                    /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="ALL">Toda urgencia</SelectItem>
-                        <SelectItem
-                            v-for="opt in options.urgencyLevels"
                             :key="opt.value"
                             :value="opt.value"
                             >{{ opt.label }}</SelectItem
@@ -303,19 +356,6 @@ const doughnutOptions = {
                     </SelectContent>
                 </Select>
 
-                <Select v-model="isAnonymous">
-                    <SelectTrigger class="w-full"
-                        ><SelectValue placeholder="Anónima"
-                    /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem :value="ALL"
-                            >Anónimas y no anónimas</SelectItem
-                        >
-                        <SelectItem value="1">Solo anónimas</SelectItem>
-                        <SelectItem value="0">Solo no anónimas</SelectItem>
-                    </SelectContent>
-                </Select>
-
                 <Select v-model="hasEvidence">
                     <SelectTrigger class="w-full"
                         ><SelectValue placeholder="Evidencia"
@@ -344,51 +384,78 @@ const doughnutOptions = {
             <StatCard
                 label="Total en el filtro"
                 :value="summary.total"
-                :icon="ClipboardList"
+                :icon="MessagesSquare"
             />
             <StatCard
-                label="Críticas"
-                :value="summary.criticas"
-                :icon="AlertOctagon"
-                tone="red"
-            />
-            <StatCard
-                label="Anónimas"
-                :value="summary.anonimas"
-                :icon="EyeOff"
+                label="Pendientes"
+                :value="summary.pendientes"
+                :icon="CalendarClock"
+                tone="gold"
             />
             <StatCard
                 label="Con evidencia"
                 :value="summary.con_evidencia"
                 :icon="Paperclip"
+                tone="purple"
+            />
+            <StatCard
+                label="Cerrados"
+                :value="summary.cerrados"
+                :icon="FolderCheck"
+                tone="gray"
             />
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
-            <ChartCard title="Solicitudes por tipo">
-                <Bar :data="barData(charts.byType)" :options="baseOptions" />
-            </ChartCard>
-            <ChartCard title="Solicitudes por nivel de urgencia">
-                <Doughnut
-                    :data="doughnutData(charts.byUrgency)"
-                    :options="doughnutOptions"
+            <ChartCard title="Mensajes por tipo">
+                <ChartSkeleton v-if="!isMounted" />
+                <ChartEmptyState v-else-if="!hasData(charts.byType)" />
+                <VueApexCharts
+                    v-else
+                    type="bar"
+                    height="100%"
+                    :options="typeOptions"
+                    :series="typeSeries"
                 />
             </ChartCard>
-            <ChartCard title="Solicitudes por departamento">
-                <Bar
-                    :data="barData(charts.byDepartment)"
-                    :options="baseOptions"
+            <ChartCard title="Mensajes por departamento">
+                <ChartSkeleton v-if="!isMounted" />
+                <ChartEmptyState v-else-if="!hasData(charts.byDepartment)" />
+                <VueApexCharts
+                    v-else
+                    type="bar"
+                    height="100%"
+                    :options="departmentOptions"
+                    :series="departmentSeries"
                 />
             </ChartCard>
-            <ChartCard title="Solicitudes por estado">
-                <Doughnut
-                    :data="doughnutData(charts.byStatus)"
-                    :options="doughnutOptions"
+            <ChartCard title="Mensajes por estado">
+                <ChartSkeleton v-if="!isMounted" />
+                <ChartEmptyState v-else-if="!hasData(charts.byStatus)" />
+                <VueApexCharts
+                    v-else
+                    type="donut"
+                    height="100%"
+                    :options="statusOptions"
+                    :series="statusSeries"
+                />
+            </ChartCard>
+            <ChartCard title="Evidencia">
+                <ChartSkeleton v-if="!isMounted" />
+                <ChartEmptyState v-else-if="!hasData(charts.byEvidence)" />
+                <VueApexCharts
+                    v-else
+                    type="donut"
+                    height="100%"
+                    :options="evidenceOptions"
+                    :series="evidenceSeries"
                 />
             </ChartCard>
         </div>
 
-        <div class="overflow-hidden rounded-xl border bg-card">
+        <div
+            class="animate-in overflow-hidden rounded-2xl border bg-card fade-in slide-in-from-bottom-2 duration-500"
+        >
             <div class="border-b p-4">
                 <h2 class="flex items-center gap-2 text-sm font-semibold">
                     <Eye class="size-4" /> Tabla resumen
@@ -398,33 +465,29 @@ const doughnutOptions = {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Folio</TableHead>
-                            <TableHead>Tipo</TableHead>
-                            <TableHead>Departamento</TableHead>
-                            <TableHead>Ubicación</TableHead>
-                            <TableHead>Estado</TableHead>
                             <TableHead>Fecha</TableHead>
+                            <TableHead>Nombre</TableHead>
+                            <TableHead>Contacto</TableHead>
+                            <TableHead>Departamento</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Estado</TableHead>
+                            <TableHead>Evidencia</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="requests.data.length === 0">
                             <TableCell
-                                colspan="6"
+                                colspan="7"
                                 class="py-10 text-center text-sm text-muted-foreground"
                             >
                                 No hay resultados para estos filtros.
                             </TableCell>
                         </TableRow>
-                        <TableRow v-for="item in requests.data" :key="item.id">
-                            <TableCell class="font-mono text-xs">{{
-                                item.folio
-                            }}</TableCell>
-                            <TableCell>{{ item.request_type_label }}</TableCell>
-                            <TableCell>{{ item.department_label }}</TableCell>
-                            <TableCell class="max-w-40 truncate">{{
-                                item.location ?? '—'
-                            }}</TableCell>
-                            <TableCell>{{ item.status_label }}</TableCell>
+                        <TableRow
+                            v-for="item in requests.data"
+                            :key="item.id"
+                            class="transition-colors hover:bg-accent/30"
+                        >
                             <TableCell class="text-xs text-muted-foreground">
                                 {{
                                     new Date(
@@ -432,6 +495,19 @@ const doughnutOptions = {
                                     ).toLocaleDateString('es-MX')
                                 }}
                             </TableCell>
+                            <TableCell class="font-medium">{{
+                                item.full_name ?? '—'
+                            }}</TableCell>
+                            <TableCell class="text-muted-foreground">{{
+                                item.contact_info ?? '—'
+                            }}</TableCell>
+                            <TableCell>{{ item.department_label }}</TableCell>
+                            <TableCell>{{ item.request_type_label }}</TableCell>
+                            <TableCell>{{ item.status_label }}</TableCell>
+                            <TableCell
+                                ><EvidenceBadge
+                                    :has-evidence="!!item.has_evidence"
+                            /></TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Contracts\LabeledEnum;
-use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
-use App\Enums\UrgencyLevel;
 use App\Exports\RequestsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Request as BuzonRequest;
@@ -24,7 +22,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ReportController extends Controller
 {
     private const FILTER_KEYS = [
-        'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'date_from', 'date_to',
+        'search', 'status', 'request_type', 'department', 'has_evidence', 'date_from', 'date_to',
     ];
 
     public function index(HttpRequest $request): Response
@@ -36,21 +34,26 @@ class ReportController extends Controller
             'filters' => $filters,
             'options' => [
                 'requestTypes' => collect(RequestType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
-                'departments' => collect(Department::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
-                'urgencyLevels' => collect(UrgencyLevel::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
+                'departments' => BuzonRequest::query()
+                    ->select('department')
+                    ->distinct()
+                    ->orderBy('department')
+                    ->pluck('department')
+                    ->map(fn ($department) => ['value' => $department, 'label' => $department])
+                    ->all(),
                 'statuses' => collect(RequestStatus::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
             ],
             'summary' => [
                 'total' => (clone $filtered)->count(),
-                'criticas' => (clone $filtered)->where('urgency_level', UrgencyLevel::Critico)->count(),
-                'anonimas' => (clone $filtered)->where('is_anonymous', true)->count(),
+                'pendientes' => (clone $filtered)->whereIn('status', [RequestStatus::Recibido, RequestStatus::EnRevision])->count(),
                 'con_evidencia' => (clone $filtered)->where('has_evidence', true)->count(),
+                'cerrados' => (clone $filtered)->where('status', RequestStatus::Cerrado)->count(),
             ],
             'charts' => [
-                'byType' => $this->countBy($filtered, 'request_type', RequestType::cases()),
-                'byUrgency' => $this->countBy($filtered, 'urgency_level', UrgencyLevel::cases()),
-                'byDepartment' => $this->countBy($filtered, 'department', Department::cases()),
-                'byStatus' => $this->countBy($filtered, 'status', RequestStatus::cases()),
+                'byType' => $this->countByEnum($filtered, 'request_type', RequestType::cases()),
+                'byDepartment' => $this->countByDepartment($filtered),
+                'byStatus' => $this->countByEnum($filtered, 'status', RequestStatus::cases()),
+                'byEvidence' => $this->countByEvidence($filtered),
             ],
             'requests' => (clone $filtered)
                 ->latest()
@@ -60,11 +63,10 @@ class ReportController extends Controller
                     'id' => $r->id,
                     'folio' => $r->folio,
                     'request_type_label' => $r->request_type->label(),
-                    'department_label' => Department::tryFrom($r->department)?->label() ?? $r->department,
-                    'location' => $r->location,
-                    'urgency_level_label' => $r->urgency_level->label(),
+                    'department_label' => $r->department,
+                    'full_name' => $r->full_name,
+                    'contact_info' => $r->contact_info,
                     'status_label' => $r->status->label(),
-                    'is_anonymous' => $r->is_anonymous,
                     'has_evidence' => $r->has_evidence,
                     'created_at' => $r->created_at?->toIso8601String(),
                 ]),
@@ -90,6 +92,7 @@ class ReportController extends Controller
         $filters = $request->only(self::FILTER_KEYS);
 
         $requests = BuzonRequest::query()
+            ->with('attachments')
             ->filter($filters)
             ->latest()
             ->get();
@@ -99,6 +102,7 @@ class ReportController extends Controller
 
         $pdf = Pdf::loadView('reports.pdf', [
             'requests' => $requests,
+            'filters' => $filters,
             'generatedAt' => $generatedAt->isoFormat('D [de] MMMM [de] YYYY, HH:mm'),
         ])->setPaper('a4', 'landscape');
 
@@ -113,9 +117,9 @@ class ReportController extends Controller
     /**
      * @param  Builder<BuzonRequest>  $query
      * @param  array<int, LabeledEnum>  $cases
-     * @return array<int, array{label: string, value: int}>
+     * @return array<int, array{label: string, value: int, key: string}>
      */
-    private function countBy(Builder $query, string $column, array $cases): array
+    private function countByEnum(Builder $query, string $column, array $cases): array
     {
         $counts = (clone $query)
             ->select($column)
@@ -127,7 +131,49 @@ class ReportController extends Controller
             ->map(fn (LabeledEnum $case) => [
                 'label' => $case->label(),
                 'value' => (int) ($counts[$case->value] ?? 0),
+                'key' => $case->value,
             ])
             ->all();
+    }
+
+    /**
+     * @param  Builder<BuzonRequest>  $query
+     * @return array<int, array{label: string, value: int, key: string}>
+     */
+    private function countByDepartment(Builder $query): array
+    {
+        return (clone $query)
+            ->select('department')
+            ->selectRaw('count(*) as total')
+            ->groupBy('department')
+            ->orderByDesc('total')
+            ->limit(8)
+            ->get()
+            ->map(fn ($row) => [
+                'label' => $row->department,
+                'value' => (int) $row->total,
+                'key' => $row->department,
+            ])
+            ->all();
+    }
+
+    /**
+     * @param  Builder<BuzonRequest>  $query
+     * @return array<int, array{label: string, value: int, key: string}>
+     */
+    private function countByEvidence(Builder $query): array
+    {
+        return [
+            [
+                'label' => 'Con evidencia',
+                'value' => (clone $query)->where('has_evidence', true)->count(),
+                'key' => '1',
+            ],
+            [
+                'label' => 'Sin evidencia',
+                'value' => (clone $query)->where('has_evidence', false)->count(),
+                'key' => '0',
+            ],
+        ];
     }
 }
