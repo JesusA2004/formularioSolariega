@@ -76,8 +76,67 @@ function submit() {
         <meta property="og:site_name" content="Buzón Solariega" />
     </Head>
 
-    <div class="min-h-svh bg-background lg:grid lg:grid-cols-[58%_42%]">
-        <!-- Left column: form -->
+    <div class="min-h-svh bg-background lg:grid lg:grid-cols-[42%_58%]">
+        <!-- Left column: institutional visual block -->
+        <div
+            class="relative flex flex-col justify-between gap-10 overflow-hidden bg-[#171717] px-8 py-12 text-marfil sm:px-12 lg:min-h-svh lg:px-14 lg:py-16"
+        >
+            <div class="absolute inset-0">
+                <div
+                    class="size-full bg-gradient-to-br from-[#1E1E1E] via-[#232323] to-[#171717]"
+                />
+                <img
+                    v-if="!heroImageMissing"
+                    src="/images/buzon-hero.png"
+                    alt=""
+                    class="absolute inset-0 size-full object-cover"
+                    @error="heroImageMissing = true"
+                />
+            </div>
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"
+            />
+            <div
+                class="pointer-events-none absolute -top-16 -right-16 size-72 rounded-full bg-gold/15 blur-3xl"
+            />
+            <div
+                class="pointer-events-none absolute inset-x-10 bottom-24 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
+            />
+
+            <div
+                class="relative z-10 flex animate-in items-center justify-center duration-700 fade-in slide-in-from-top-4"
+            >
+                <img
+                    src="/images/logoLetras.png"
+                    alt="Solariega Cenit"
+                    class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
+                />
+            </div>
+
+            <div
+                class="relative z-10 max-w-md animate-in space-y-5 duration-700 fade-in slide-in-from-bottom-4"
+            >
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-semibold sm:text-4xl">
+                        Buzón Solariega
+                    </h1>
+                    <p class="text-lg font-medium text-marfil/90">
+                        Queremos escucharte
+                    </p>
+                    <p class="text-sm text-marfil/70">
+                        Comparte tus comentarios, sugerencias o cualquier
+                        situación que requiera atención. Cada mensaje será
+                        tratado con seriedad, confidencialidad y respeto.
+                    </p>
+                </div>
+            </div>
+
+            <p class="relative z-10 text-xs text-marfil/50">
+                © {{ new Date().getFullYear() }} Solariega Cenit
+            </p>
+        </div>
+
+        <!-- Right column: form -->
         <div
             class="flex flex-col justify-center px-4 py-10 sm:px-8 lg:px-14 lg:py-16"
         >
@@ -267,65 +326,6 @@ function submit() {
                     </Button>
                 </form>
             </div>
-        </div>
-
-        <!-- Right column: institutional visual block -->
-        <div
-            class="relative flex flex-col justify-between gap-10 overflow-hidden bg-[#171717] px-8 py-12 text-marfil sm:px-12 lg:min-h-svh lg:px-14 lg:py-16"
-        >
-            <div class="absolute inset-0">
-                <div
-                    class="size-full bg-gradient-to-br from-[#1E1E1E] via-[#232323] to-[#171717]"
-                />
-                <img
-                    v-if="!heroImageMissing"
-                    src="/images/buzon-hero.png"
-                    alt=""
-                    class="absolute inset-0 size-full object-cover"
-                    @error="heroImageMissing = true"
-                />
-            </div>
-            <div
-                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"
-            />
-            <div
-                class="pointer-events-none absolute -top-16 -left-16 size-72 rounded-full bg-gold/15 blur-3xl"
-            />
-            <div
-                class="pointer-events-none absolute inset-x-10 bottom-24 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
-            />
-
-            <div
-                class="relative z-10 flex animate-in items-center justify-center duration-700 fade-in slide-in-from-top-4"
-            >
-                <img
-                    src="/images/logoLetras.png"
-                    alt="Solariega Cenit"
-                    class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
-                />
-            </div>
-
-            <div
-                class="relative z-10 max-w-md animate-in space-y-5 duration-700 fade-in slide-in-from-bottom-4"
-            >
-                <div class="space-y-2">
-                    <h1 class="text-3xl font-semibold sm:text-4xl">
-                        Buzón Solariega
-                    </h1>
-                    <p class="text-lg font-medium text-marfil/90">
-                        Queremos escucharte
-                    </p>
-                    <p class="text-sm text-marfil/70">
-                        Comparte tus comentarios, sugerencias o cualquier
-                        situación que requiera atención. Cada mensaje será
-                        tratado con seriedad, confidencialidad y respeto.
-                    </p>
-                </div>
-            </div>
-
-            <p class="relative z-10 text-xs text-marfil/50">
-                © {{ new Date().getFullYear() }} Solariega Cenit
-            </p>
         </div>
     </div>
 </template>
