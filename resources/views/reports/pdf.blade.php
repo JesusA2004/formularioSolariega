@@ -29,6 +29,7 @@
             <tr>
                 <th>Folio</th>
                 <th>Tipo</th>
+                <th>Quién envía</th>
                 <th>Departamento</th>
                 <th>Ubicación</th>
                 <th>Urgencia</th>
@@ -43,6 +44,7 @@
                 <tr>
                     <td>{{ $request->folio }}</td>
                     <td>{{ $request->request_type->label() }}</td>
+                    <td>{{ $request->sender_type?->label() ?? '—' }}</td>
                     <td>{{ \App\Enums\Department::tryFrom($request->department)?->label() ?? $request->department }}</td>
                     <td>{{ $request->location }}</td>
                     <td>{{ $request->urgency_level->label() }}</td>

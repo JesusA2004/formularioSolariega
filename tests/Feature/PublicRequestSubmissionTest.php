@@ -19,6 +19,7 @@ test('a visitor can submit a request with an attachment and receives a folio', f
 
     $response = $this->post(route('reportar.store'), [
         'request_type' => 'queja',
+        'sender_type' => 'colaborador',
         'is_anonymous' => '0',
         'full_name' => 'Juan Pérez',
         'department' => 'sistemas',
@@ -50,6 +51,7 @@ test('anonymous requests never store the name or contact info', function () {
 
     $this->post(route('reportar.store'), [
         'request_type' => 'sugerencia',
+        'sender_type' => 'cliente',
         'is_anonymous' => '1',
         'full_name' => 'Nombre que no debe guardarse',
         'department' => 'operaciones',
@@ -74,6 +76,7 @@ test('the success page shows the folio without exposing sensitive data', functio
 
     $this->post(route('reportar.store'), [
         'request_type' => 'otro',
+        'sender_type' => 'visitante',
         'is_anonymous' => '1',
         'department' => 'otro',
         'location' => 'Oficinas',
@@ -100,6 +103,7 @@ test('the public form is rate limited', function () {
 
     $payload = [
         'request_type' => 'queja',
+        'sender_type' => 'colaborador',
         'is_anonymous' => '1',
         'department' => 'sistemas',
         'location' => 'Planta principal',

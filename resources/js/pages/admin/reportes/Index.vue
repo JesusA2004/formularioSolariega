@@ -57,6 +57,7 @@ const props = defineProps<{
     filters: Record<string, string | undefined>;
     options: {
         requestTypes: OptionItem[];
+        senderTypes: OptionItem[];
         departments: OptionItem[];
         urgencyLevels: OptionItem[];
         statuses: OptionItem[];
@@ -82,6 +83,7 @@ const dateFrom = ref<string | null>(props.filters.date_from ?? null);
 const dateTo = ref<string | null>(props.filters.date_to ?? null);
 const status = ref(props.filters.status ?? ALL);
 const requestType = ref(props.filters.request_type ?? ALL);
+const senderType = ref(props.filters.sender_type ?? ALL);
 const urgencyLevel = ref(props.filters.urgency_level ?? ALL);
 const department = ref(props.filters.department ?? ALL);
 const isAnonymous = ref(props.filters.is_anonymous ?? ALL);
@@ -93,6 +95,7 @@ function currentFilters() {
         date_to: dateTo.value || undefined,
         status: status.value === ALL ? undefined : status.value,
         request_type: requestType.value === ALL ? undefined : requestType.value,
+        sender_type: senderType.value === ALL ? undefined : senderType.value,
         urgency_level:
             urgencyLevel.value === ALL ? undefined : urgencyLevel.value,
         department: department.value === ALL ? undefined : department.value,
@@ -114,6 +117,7 @@ watch(
         dateTo,
         status,
         requestType,
+        senderType,
         urgencyLevel,
         department,
         isAnonymous,
@@ -127,6 +131,7 @@ function clearFilters() {
     dateTo.value = null;
     status.value = ALL;
     requestType.value = ALL;
+    senderType.value = ALL;
     urgencyLevel.value = ALL;
     department.value = ALL;
     isAnonymous.value = ALL;
@@ -273,12 +278,27 @@ const doughnutOptions = {
 
                 <Select v-model="requestType">
                     <SelectTrigger class="w-full"
-                        ><SelectValue placeholder="Tipo de solicitud"
+                        ><SelectValue placeholder="Tipo de mensaje"
                     /></SelectTrigger>
                     <SelectContent>
                         <SelectItem :value="ALL">Todos los tipos</SelectItem>
                         <SelectItem
                             v-for="opt in options.requestTypes"
+                            :key="opt.value"
+                            :value="opt.value"
+                            >{{ opt.label }}</SelectItem
+                        >
+                    </SelectContent>
+                </Select>
+
+                <Select v-model="senderType">
+                    <SelectTrigger class="w-full"
+                        ><SelectValue placeholder="Quién envía"
+                    /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem :value="ALL">Todos</SelectItem>
+                        <SelectItem
+                            v-for="opt in options.senderTypes"
                             :key="opt.value"
                             :value="opt.value"
                             >{{ opt.label }}</SelectItem
@@ -400,6 +420,7 @@ const doughnutOptions = {
                         <TableRow>
                             <TableHead>Folio</TableHead>
                             <TableHead>Tipo</TableHead>
+                            <TableHead>Quién envía</TableHead>
                             <TableHead>Departamento</TableHead>
                             <TableHead>Ubicación</TableHead>
                             <TableHead>Estado</TableHead>
@@ -409,7 +430,7 @@ const doughnutOptions = {
                     <TableBody>
                         <TableRow v-if="requests.data.length === 0">
                             <TableCell
-                                colspan="6"
+                                colspan="7"
                                 class="py-10 text-center text-sm text-muted-foreground"
                             >
                                 No hay resultados para estos filtros.
@@ -420,6 +441,9 @@ const doughnutOptions = {
                                 item.folio
                             }}</TableCell>
                             <TableCell>{{ item.request_type_label }}</TableCell>
+                            <TableCell>{{
+                                item.sender_type_label ?? '—'
+                            }}</TableCell>
                             <TableCell>{{ item.department_label }}</TableCell>
                             <TableCell class="max-w-40 truncate">{{
                                 item.location

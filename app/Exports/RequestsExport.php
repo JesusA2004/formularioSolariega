@@ -39,7 +39,8 @@ class RequestsExport implements FromCollection, WithHeadings, WithMapping, WithS
     {
         return [
             'Folio',
-            'Tipo de solicitud',
+            'Tipo de mensaje',
+            'Quién envía',
             'Anónima',
             'Nombre',
             'Departamento',
@@ -66,6 +67,7 @@ class RequestsExport implements FromCollection, WithHeadings, WithMapping, WithS
         return [
             $request->folio,
             $request->request_type->label(),
+            $request->sender_type?->label() ?? '',
             $request->is_anonymous ? 'Sí' : 'No',
             $request->is_anonymous ? '' : $request->full_name,
             Department::tryFrom($request->department)?->label() ?? $request->department,

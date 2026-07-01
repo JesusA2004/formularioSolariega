@@ -111,6 +111,9 @@ function formatDateTime(value: string | null) {
                     </h1>
                     <p class="text-xs text-muted-foreground">
                         Enviada el {{ formatDateTime(request.created_at) }}
+                        <span v-if="request.sender_type_label">
+                            · {{ request.sender_type_label }}</span
+                        >
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Enums\Department;
 use App\Enums\RequestType;
+use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequestRequest;
@@ -85,6 +86,9 @@ class PublicRequestController extends Controller
         return [
             'requestTypes' => collect(RequestType::cases())
                 ->map(fn (RequestType $type) => ['value' => $type->value, 'label' => $type->label()])
+                ->all(),
+            'senderTypes' => collect(SenderType::cases())
+                ->map(fn (SenderType $type) => ['value' => $type->value, 'label' => $type->label()])
                 ->all(),
             'departments' => collect(Department::cases())
                 ->map(fn (Department $department) => ['value' => $department->value, 'label' => $department->label()])

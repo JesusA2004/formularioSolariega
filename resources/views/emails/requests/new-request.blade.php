@@ -1,7 +1,7 @@
 <x-mail::message>
 # Nueva solicitud recibida
 
-Se ha registrado una nueva solicitud en el Buzón de Quejas, Sugerencias y Reportes de Solariega Cenit.
+Se ha registrado un nuevo mensaje en el Buzón Solariega de Solariega Cenit.
 
 | | |
 |---|---|
@@ -31,7 +31,7 @@ Esta solicitud cuenta con archivos adjuntos. Revísalos desde el panel administr
 Ver en el panel administrativo
 </x-mail::button>
 
-Este correo fue generado automáticamente por el Buzón de Solariega Cenit. No respondas a este mensaje.
+Este correo fue generado automáticamente por Buzón Solariega. No respondas a este mensaje.
 
 {{ config('app.name') }}
 </x-mail::message>

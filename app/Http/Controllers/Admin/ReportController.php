@@ -6,6 +6,7 @@ use App\Contracts\LabeledEnum;
 use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
+use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Exports\RequestsExport;
 use App\Http\Controllers\Controller;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ReportController extends Controller
 {
     private const FILTER_KEYS = [
-        'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'date_from', 'date_to',
+        'search', 'status', 'request_type', 'sender_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'date_from', 'date_to',
     ];
 
     public function index(HttpRequest $request): Response
@@ -36,6 +37,7 @@ class ReportController extends Controller
             'filters' => $filters,
             'options' => [
                 'requestTypes' => collect(RequestType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
+                'senderTypes' => collect(SenderType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
                 'departments' => collect(Department::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
                 'urgencyLevels' => collect(UrgencyLevel::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
                 'statuses' => collect(RequestStatus::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
@@ -60,6 +62,7 @@ class ReportController extends Controller
                     'id' => $r->id,
                     'folio' => $r->folio,
                     'request_type_label' => $r->request_type->label(),
+                    'sender_type_label' => $r->sender_type?->label(),
                     'department_label' => Department::tryFrom($r->department)?->label() ?? $r->department,
                     'location' => $r->location,
                     'urgency_level_label' => $r->urgency_level->label(),

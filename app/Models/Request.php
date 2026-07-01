@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
+use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use App\Services\FolioGenerator;
 use Carbon\CarbonInterface;
@@ -21,6 +22,7 @@ use Illuminate\Support\Str;
  * @property string $uuid
  * @property string $folio
  * @property RequestType $request_type
+ * @property SenderType|null $sender_type
  * @property bool $is_anonymous
  * @property string|null $full_name
  * @property string $department
@@ -44,6 +46,7 @@ use Illuminate\Support\Str;
  */
 #[Fillable([
     'request_type',
+    'sender_type',
     'is_anonymous',
     'full_name',
     'department',
@@ -83,6 +86,7 @@ class Request extends Model
     {
         return [
             'request_type' => RequestType::class,
+            'sender_type' => SenderType::class,
             'urgency_level' => UrgencyLevel::class,
             'status' => RequestStatus::class,
             'is_anonymous' => 'boolean',
@@ -136,6 +140,10 @@ class Request extends Model
 
         if (! empty($filters['request_type'])) {
             $query->where('request_type', $filters['request_type']);
+        }
+
+        if (! empty($filters['sender_type'])) {
+            $query->where('sender_type', $filters['sender_type']);
         }
 
         if (! empty($filters['urgency_level'])) {

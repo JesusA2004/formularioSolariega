@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Department;
 use App\Enums\RequestType;
+use App\Enums\SenderType;
 use App\Enums\UrgencyLevel;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -37,6 +38,7 @@ class StoreRequestRequest extends FormRequest
     {
         return [
             'request_type' => ['required', 'string', Rule::in(array_column(RequestType::cases(), 'value'))],
+            'sender_type' => ['required', 'string', Rule::in(array_column(SenderType::cases(), 'value'))],
             'is_anonymous' => ['required', 'boolean'],
             'full_name' => ['nullable', 'string', 'max:255'],
             'department' => ['required', 'string', Rule::in(array_column(Department::cases(), 'value'))],
@@ -64,19 +66,21 @@ class StoreRequestRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'request_type.required' => 'Selecciona el tipo de solicitud.',
-            'request_type.in' => 'El tipo de solicitud seleccionado no es válido.',
-            'is_anonymous.required' => 'Indica si deseas que tu solicitud sea anónima.',
-            'department.required' => 'Selecciona el área o departamento.',
-            'department.in' => 'El área o departamento seleccionado no es válido.',
-            'location.required' => 'Indica la sucursal, planta o ubicación.',
-            'incident_date.date' => 'La fecha del hecho no es válida.',
-            'incident_date.before_or_equal' => 'La fecha del hecho no puede ser futura.',
-            'description.required' => 'Describe tu solicitud para poder continuar.',
-            'description.min' => 'Por favor describe la situación con más detalle (mínimo 20 caracteres).',
-            'description.max' => 'La descripción es demasiado larga (máximo 5000 caracteres).',
-            'urgency_level.required' => 'Selecciona el nivel de urgencia.',
-            'urgency_level.in' => 'El nivel de urgencia seleccionado no es válido.',
+            'request_type.required' => 'Selecciona el tipo de mensaje.',
+            'request_type.in' => 'El tipo de mensaje seleccionado no es válido.',
+            'sender_type.required' => 'Indica quién envía el mensaje.',
+            'sender_type.in' => 'La opción seleccionada no es válida.',
+            'is_anonymous.required' => 'Indica si quieres mantener tus datos en reserva.',
+            'department.required' => 'Selecciona el área o categoría.',
+            'department.in' => 'El área o categoría seleccionada no es válida.',
+            'location.required' => 'Indica la sucursal, restaurante o ubicación.',
+            'incident_date.date' => 'La fecha indicada no es válida.',
+            'incident_date.before_or_equal' => 'La fecha indicada no puede ser futura.',
+            'description.required' => 'Cuéntanos tu mensaje para poder continuar.',
+            'description.min' => 'Por favor cuéntanos con más detalle (mínimo 20 caracteres).',
+            'description.max' => 'El mensaje es demasiado largo (máximo 5000 caracteres).',
+            'urgency_level.required' => 'Selecciona el nivel de atención.',
+            'urgency_level.in' => 'El nivel de atención seleccionado no es válido.',
             'has_evidence.required' => 'Indica si cuentas con evidencia.',
             'wants_follow_up.required' => 'Indica si deseas recibir seguimiento.',
             'accepted_terms.accepted' => 'Debes confirmar que la información proporcionada es verdadera.',
