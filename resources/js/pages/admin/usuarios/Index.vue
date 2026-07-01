@@ -219,6 +219,7 @@ function confirmDelete() {
                                         size="icon-sm"
                                         variant="outline"
                                         title="Editar"
+                                        aria-label="Editar usuario"
                                         @click="openEdit(user)"
                                     >
                                         <Pencil class="size-3.5" />
@@ -227,6 +228,7 @@ function confirmDelete() {
                                         size="icon-sm"
                                         variant="outline"
                                         title="Activar / desactivar"
+                                        aria-label="Activar o desactivar usuario"
                                         @click="toggleActive(user)"
                                     >
                                         <Power class="size-3.5" />
@@ -235,6 +237,7 @@ function confirmDelete() {
                                         size="icon-sm"
                                         variant="outline"
                                         title="Eliminar"
+                                        aria-label="Eliminar usuario"
                                         @click="deleteTarget = user"
                                     >
                                         <Trash2

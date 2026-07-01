@@ -299,6 +299,7 @@ function formatDateTime(value: string | null) {
                                                 file.id,
                                             ])
                                         "
+                                        :aria-label="`Descargar ${file.original_name}`"
                                         download
                                     >
                                         <Download class="size-4" />
