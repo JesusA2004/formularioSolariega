@@ -99,11 +99,15 @@ const heroImageMissing = ref(false);
             <div
                 class="relative z-10 flex animate-in items-center justify-center duration-700 fade-in slide-in-from-top-4"
             >
-                <img
-                    src="/images/logoLetras.png"
-                    alt="Solariega Cenit"
-                    class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
-                />
+                <div
+                    class="rounded-2xl bg-black/45 px-6 py-4 shadow-lg backdrop-blur-sm"
+                >
+                    <img
+                        src="/images/logoLetras.png"
+                        alt="Solariega Cenit"
+                        class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
+                    />
+                </div>
             </div>
 
             <div
