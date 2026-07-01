@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { MailCheck } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import DatePickerField from '@/components/public/DatePickerField.vue';
@@ -48,8 +49,26 @@ const canSubmit = computed(
         form.accepted_terms,
 );
 
+const isSubmitting = ref(false);
+
 function submit() {
-    form.post(store.url(), { forceFormData: true });
+    if (isSubmitting.value) {
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    // Envío deliberadamente pausado: aunque el backend responde casi de
+    // inmediato, mostramos esta espera para que el colaborador perciba que
+    // su mensaje realmente se está enviando y revisando.
+    setTimeout(() => {
+        form.post(store.url(), {
+            forceFormData: true,
+            onError: () => {
+                isSubmitting.value = false;
+            },
+        });
+    }, 5000);
 }
 </script>
 
@@ -319,13 +338,71 @@ function submit() {
                     <Button
                         type="submit"
                         class="w-full"
-                        :disabled="!canSubmit || form.processing"
+                        :disabled="!canSubmit || isSubmitting || form.processing"
                     >
-                        <Spinner v-if="form.processing" />
-                        Enviar mensaje
+                        <Spinner v-if="isSubmitting || form.processing" />
+                        {{
+                            isSubmitting || form.processing
+                                ? 'Enviando mensaje...'
+                                : 'Enviar mensaje'
+                        }}
                     </Button>
                 </form>
             </div>
         </div>
     </div>
+
+    <Transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+    >
+        <div
+            v-if="isSubmitting"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#171717]/90 backdrop-blur-sm"
+        >
+            <div
+                class="mx-4 flex w-full max-w-sm animate-in flex-col items-center gap-5 rounded-2xl border border-gold/20 bg-card px-8 py-10 text-center shadow-2xl zoom-in-95 duration-300 fade-in"
+            >
+                <div
+                    class="flex size-16 items-center justify-center rounded-full bg-gold/15 text-gold-foreground ring-1 ring-gold/40"
+                >
+                    <MailCheck class="size-8 animate-pulse text-gold-foreground" />
+                </div>
+
+                <div class="space-y-1.5">
+                    <p class="text-lg font-semibold">
+                        Enviando tu mensaje...
+                    </p>
+                    <p class="text-sm text-muted-foreground">
+                        Estamos registrando tu mensaje de forma confidencial.
+                        Esto tomará solo un momento.
+                    </p>
+                </div>
+
+                <div
+                    class="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                >
+                    <div
+                        class="h-full rounded-full bg-gold"
+                        style="animation: buzon-progress 5s linear forwards"
+                    />
+                </div>
+            </div>
+        </div>
+    </Transition>
 </template>
+
+<style scoped>
+@keyframes buzon-progress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+</style>
