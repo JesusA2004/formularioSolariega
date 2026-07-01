@@ -40,7 +40,7 @@ test('a collaborator can submit a message with an attachment', function () {
 
     Storage::disk('local')->assertExists($request->attachments->first()->file_path);
 
-    Mail::assertQueued(NewRequestNotification::class, fn ($mail) => $mail->request->is($request));
+    Mail::assertSent(NewRequestNotification::class, fn ($mail) => $mail->request->is($request));
 });
 
 test('the full name is required', function () {
