@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { HeartHandshake, ShieldCheck, Sparkles } from '@lucide/vue';
 import { computed, ref } from 'vue';
-import BrandMark from '@/components/BrandMark.vue';
 import InputError from '@/components/InputError.vue';
 import DatePickerField from '@/components/public/DatePickerField.vue';
 import FileDropzone from '@/components/public/FileDropzone.vue';
@@ -81,19 +79,13 @@ function submit() {
         <div
             class="relative flex flex-col justify-between gap-10 overflow-hidden bg-[#171717] px-8 py-12 text-marfil sm:px-12 lg:min-h-svh lg:px-14 lg:py-16"
         >
-            <!--
-                Fondo institucional: coloca la imagen en
-                public/images/buzon-hero.jpg (o .webp) y aparecerá aquí
-                automáticamente. Mientras no exista el archivo, se muestra
-                este degradado de respaldo.
-            -->
             <div class="absolute inset-0">
                 <div
                     class="size-full bg-gradient-to-br from-[#1E1E1E] via-[#232323] to-[#171717]"
                 />
                 <img
                     v-if="!heroImageMissing"
-                    src="/images/buzon-hero.jpg"
+                    src="/images/buzon-hero.png"
                     alt=""
                     class="absolute inset-0 size-full object-cover"
                     @error="heroImageMissing = true"
@@ -110,26 +102,18 @@ function submit() {
             />
 
             <div
-                class="relative z-10 flex items-center gap-3 animate-in duration-700 fade-in slide-in-from-top-4"
+                class="relative z-10 flex animate-in items-center justify-center duration-700 fade-in slide-in-from-top-4"
             >
-                <BrandMark
-                    class="size-11 text-lg transition-transform duration-300 hover:scale-105"
+                <img
+                    src="/images/logoLetras.png"
+                    alt="Solariega Cenit"
+                    class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
                 />
-                <span
-                    class="text-xs font-medium tracking-widest text-gold uppercase"
-                    >Solariega Cenit</span
-                >
             </div>
 
             <div
-                class="relative z-10 max-w-md space-y-5 animate-in duration-700 fade-in slide-in-from-bottom-4"
+                class="relative z-10 max-w-md animate-in space-y-5 duration-700 fade-in slide-in-from-bottom-4"
             >
-                <span
-                    class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1 text-xs font-medium tracking-wide text-gold uppercase transition-colors duration-300 hover:bg-gold/20"
-                >
-                    Canal interno de atención
-                </span>
-
                 <div class="space-y-2">
                     <h1 class="text-3xl font-semibold sm:text-4xl">
                         Buzón Solariega
@@ -143,27 +127,6 @@ function submit() {
                         tratado con seriedad, confidencialidad y respeto.
                     </p>
                 </div>
-
-                <ul class="space-y-3 text-sm">
-                    <li
-                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
-                    >
-                        <ShieldCheck class="size-4 shrink-0 text-gold" />
-                        Atención confidencial
-                    </li>
-                    <li
-                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
-                    >
-                        <Sparkles class="size-4 shrink-0 text-gold" />
-                        Seguimiento responsable
-                    </li>
-                    <li
-                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
-                    >
-                        <HeartHandshake class="size-4 shrink-0 text-gold" />
-                        Mejora continua
-                    </li>
-                </ul>
             </div>
 
             <p class="relative z-10 text-xs text-marfil/50">
@@ -185,18 +148,18 @@ function submit() {
                         Confidencialidad y seguimiento responsable
                     </p>
                     <p class="mt-1 text-sm text-muted-foreground">
-                        Tu información será tratada con confidencialidad por
-                        el área de Recursos Humanos y, en caso necesario, con
-                        la persona correspondiente para dar seguimiento
-                        adecuado. El objetivo de este espacio es escuchar,
-                        atender y mejorar, cuidando siempre el respeto hacia
-                        cada colaborador.
+                        Tu información será tratada con confidencialidad por el
+                        área de Recursos Humanos y, en caso necesario, con la
+                        persona correspondiente para dar seguimiento adecuado.
+                        El objetivo de este espacio es escuchar, atender y
+                        mejorar, cuidando siempre el respeto hacia cada
+                        colaborador.
                     </p>
                 </div>
 
                 <form class="space-y-5" @submit.prevent="submit">
                     <div
-                        class="grid animate-in gap-5 fade-in slide-in-from-bottom-2 duration-500 sm:grid-cols-2"
+                        class="grid animate-in gap-5 duration-500 fade-in slide-in-from-bottom-2 sm:grid-cols-2"
                     >
                         <div class="space-y-2">
                             <Label for="full_name">Nombre completo</Label>
@@ -210,9 +173,7 @@ function submit() {
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="department"
-                                >Área o departamento</Label
-                            >
+                            <Label for="department">Área o departamento</Label>
                             <Input
                                 id="department"
                                 v-model="form.department"
@@ -224,7 +185,7 @@ function submit() {
                     </div>
 
                     <div
-                        class="grid animate-in gap-5 fade-in slide-in-from-bottom-2 delay-100 duration-500 sm:grid-cols-2"
+                        class="grid animate-in gap-5 delay-100 duration-500 fade-in slide-in-from-bottom-2 sm:grid-cols-2"
                     >
                         <div class="space-y-2">
                             <Label>Tipo de mensaje</Label>
@@ -259,7 +220,7 @@ function submit() {
                     </div>
 
                     <div
-                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-150 duration-500"
+                        class="animate-in space-y-2 delay-150 duration-500 fade-in slide-in-from-bottom-2"
                     >
                         <Label for="involved_people"
                             >Personas relacionadas</Label
@@ -270,20 +231,18 @@ function submit() {
                             placeholder="Opcional"
                             class="transition-colors hover:border-gold/60"
                         />
-                        <InputError
-                            :message="form.errors.involved_people"
-                        />
+                        <InputError :message="form.errors.involved_people" />
                     </div>
 
                     <div
-                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-200 duration-500"
+                        class="animate-in space-y-2 delay-200 duration-500 fade-in slide-in-from-bottom-2"
                     >
                         <Label for="description">Cuéntanos tu mensaje</Label>
                         <p class="text-xs text-muted-foreground">
-                            Comparte con la mayor claridad posible lo que
-                            deseas comunicar. Si lo consideras necesario,
-                            puedes mencionar la fecha aproximada y las
-                            personas relacionadas.
+                            Comparte con la mayor claridad posible lo que deseas
+                            comunicar. Si lo consideras necesario, puedes
+                            mencionar la fecha aproximada y las personas
+                            relacionadas.
                         </p>
                         <Textarea
                             id="description"
@@ -300,20 +259,20 @@ function submit() {
                     </div>
 
                     <div
-                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-300 duration-500"
+                        class="animate-in space-y-2 delay-300 duration-500 fade-in slide-in-from-bottom-2"
                     >
                         <Label>Adjuntar evidencia (opcional)</Label>
                         <p class="text-xs text-muted-foreground">
                             Si cuentas con capturas, fotos u otro documento,
-                            compártelo aquí. No es obligatorio, pero ayuda a
-                            dar mejor seguimiento a tu mensaje.
+                            compártelo aquí. No es obligatorio, pero ayuda a dar
+                            mejor seguimiento a tu mensaje.
                         </p>
                         <FileDropzone v-model="form.attachments" />
                         <InputError :message="form.errors.attachments" />
                     </div>
 
                     <div
-                        class="animate-in flex items-start gap-3 rounded-lg border bg-muted/40 p-4 fade-in slide-in-from-bottom-2 delay-300 duration-500 transition-colors hover:border-gold/40 hover:bg-gold/5"
+                        class="flex animate-in items-start gap-3 rounded-lg border bg-muted/40 p-4 transition-colors delay-300 duration-500 fade-in slide-in-from-bottom-2 hover:border-gold/40 hover:bg-gold/5"
                     >
                         <Checkbox
                             id="accepted_terms"
@@ -325,8 +284,8 @@ function submit() {
                             class="text-sm leading-relaxed font-normal"
                         >
                             Confirmo que la información proporcionada es
-                            correcta según mi conocimiento y entiendo que
-                            será tratada de forma confidencial por el área de
+                            correcta según mi conocimiento y entiendo que será
+                            tratada de forma confidencial por el área de
                             Recursos Humanos para su debida atención y
                             seguimiento.
                         </Label>
