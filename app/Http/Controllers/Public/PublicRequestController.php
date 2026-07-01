@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Public;
 
-use App\Enums\Department;
 use App\Enums\RequestType;
 use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
@@ -86,9 +85,6 @@ class PublicRequestController extends Controller
         return [
             'requestTypes' => collect(RequestType::publicOptions())
                 ->map(fn (RequestType $type) => ['value' => $type->value, 'label' => $type->label()])
-                ->all(),
-            'departments' => collect(Department::cases())
-                ->map(fn (Department $department) => ['value' => $department->value, 'label' => $department->label()])
                 ->all(),
         ];
     }

@@ -6,7 +6,6 @@ export type OptionItem = {
 
 export type FormOptions = {
     requestTypes: OptionItem[];
-    departments: OptionItem[];
 };
 
 export type RequestStatusValue =

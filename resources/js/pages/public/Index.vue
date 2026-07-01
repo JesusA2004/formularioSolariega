@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import { HeartHandshake, ShieldCheck, Sparkles } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import BrandMark from '@/components/BrandMark.vue';
 import InputError from '@/components/InputError.vue';
 import DatePickerField from '@/components/public/DatePickerField.vue';
@@ -25,6 +25,8 @@ import type { FormOptions } from '@/types/buzon';
 const props = defineProps<{
     options: FormOptions;
 }>();
+
+const heroImageMissing = ref(false);
 
 const form = useForm({
     full_name: '',
@@ -80,13 +82,21 @@ function submit() {
             class="relative flex flex-col justify-between gap-10 overflow-hidden bg-[#171717] px-8 py-12 text-marfil sm:px-12 lg:min-h-svh lg:px-14 lg:py-16"
         >
             <!--
-                Placeholder for future photography. Replace the gradient div
-                below with an <img class="absolute inset-0 size-full object-cover" />
-                when the real image is ready — the overlay/gradient/text stay on top.
+                Fondo institucional: coloca la imagen en
+                public/images/buzon-hero.jpg (o .webp) y aparecerá aquí
+                automáticamente. Mientras no exista el archivo, se muestra
+                este degradado de respaldo.
             -->
             <div class="absolute inset-0">
                 <div
                     class="size-full bg-gradient-to-br from-[#1E1E1E] via-[#232323] to-[#171717]"
+                />
+                <img
+                    v-if="!heroImageMissing"
+                    src="/images/buzon-hero.jpg"
+                    alt=""
+                    class="absolute inset-0 size-full object-cover"
+                    @error="heroImageMissing = true"
                 />
             </div>
             <div
@@ -102,7 +112,9 @@ function submit() {
             <div
                 class="relative z-10 flex items-center gap-3 animate-in duration-700 fade-in slide-in-from-top-4"
             >
-                <BrandMark class="size-11 text-lg" />
+                <BrandMark
+                    class="size-11 text-lg transition-transform duration-300 hover:scale-105"
+                />
                 <span
                     class="text-xs font-medium tracking-widest text-gold uppercase"
                     >Solariega Cenit</span
@@ -113,7 +125,7 @@ function submit() {
                 class="relative z-10 max-w-md space-y-5 animate-in duration-700 fade-in slide-in-from-bottom-4"
             >
                 <span
-                    class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1 text-xs font-medium tracking-wide text-gold uppercase"
+                    class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1 text-xs font-medium tracking-wide text-gold uppercase transition-colors duration-300 hover:bg-gold/20"
                 >
                     Canal interno de atención
                 </span>
@@ -133,15 +145,21 @@ function submit() {
                 </div>
 
                 <ul class="space-y-3 text-sm">
-                    <li class="flex items-center gap-2.5">
+                    <li
+                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
+                    >
                         <ShieldCheck class="size-4 shrink-0 text-gold" />
                         Atención confidencial
                     </li>
-                    <li class="flex items-center gap-2.5">
+                    <li
+                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
+                    >
                         <Sparkles class="size-4 shrink-0 text-gold" />
                         Seguimiento responsable
                     </li>
-                    <li class="flex items-center gap-2.5">
+                    <li
+                        class="flex items-center gap-2.5 transition-transform duration-300 hover:translate-x-1"
+                    >
                         <HeartHandshake class="size-4 shrink-0 text-gold" />
                         Mejora continua
                     </li>
@@ -161,7 +179,7 @@ function submit() {
                 class="mx-auto w-full max-w-xl animate-in duration-700 fade-in slide-in-from-bottom-4 lg:max-w-2xl"
             >
                 <div
-                    class="mb-6 rounded-2xl border border-gold/30 bg-gold/5 p-4"
+                    class="mb-6 rounded-2xl border border-gold/30 bg-gold/5 p-4 transition-shadow duration-300 hover:shadow-md hover:shadow-gold/10"
                 >
                     <p class="text-sm font-medium">
                         Confidencialidad y seguimiento responsable
@@ -177,41 +195,43 @@ function submit() {
                 </div>
 
                 <form class="space-y-5" @submit.prevent="submit">
-                    <div class="grid gap-5 sm:grid-cols-2">
+                    <div
+                        class="grid animate-in gap-5 fade-in slide-in-from-bottom-2 duration-500 sm:grid-cols-2"
+                    >
                         <div class="space-y-2">
                             <Label for="full_name">Nombre completo</Label>
                             <Input
                                 id="full_name"
                                 v-model="form.full_name"
                                 placeholder="Escribe tu nombre completo"
+                                class="transition-colors hover:border-gold/60"
                             />
                             <InputError :message="form.errors.full_name" />
                         </div>
 
                         <div class="space-y-2">
-                            <Label>Área o departamento</Label>
-                            <Select v-model="form.department">
-                                <SelectTrigger class="w-full">
-                                    <SelectValue placeholder="Selecciona un área" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="opt in options.departments"
-                                        :key="opt.value"
-                                        :value="opt.value"
-                                        >{{ opt.label }}</SelectItem
-                                    >
-                                </SelectContent>
-                            </Select>
+                            <Label for="department"
+                                >Área o departamento</Label
+                            >
+                            <Input
+                                id="department"
+                                v-model="form.department"
+                                placeholder="Ejemplo: Cocina, Recursos Humanos, Sistemas..."
+                                class="transition-colors hover:border-gold/60"
+                            />
                             <InputError :message="form.errors.department" />
                         </div>
                     </div>
 
-                    <div class="grid gap-5 sm:grid-cols-2">
+                    <div
+                        class="grid animate-in gap-5 fade-in slide-in-from-bottom-2 delay-100 duration-500 sm:grid-cols-2"
+                    >
                         <div class="space-y-2">
                             <Label>Tipo de mensaje</Label>
                             <Select v-model="form.request_type">
-                                <SelectTrigger class="w-full">
+                                <SelectTrigger
+                                    class="w-full transition-colors hover:border-gold/60"
+                                >
                                     <SelectValue
                                         placeholder="Selecciona una opción"
                                     />
@@ -238,7 +258,9 @@ function submit() {
                         </div>
                     </div>
 
-                    <div class="space-y-2">
+                    <div
+                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-150 duration-500"
+                    >
                         <Label for="involved_people"
                             >Personas relacionadas</Label
                         >
@@ -246,13 +268,16 @@ function submit() {
                             id="involved_people"
                             v-model="form.involved_people"
                             placeholder="Opcional"
+                            class="transition-colors hover:border-gold/60"
                         />
                         <InputError
                             :message="form.errors.involved_people"
                         />
                     </div>
 
-                    <div class="space-y-2">
+                    <div
+                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-200 duration-500"
+                    >
                         <Label for="description">Cuéntanos tu mensaje</Label>
                         <p class="text-xs text-muted-foreground">
                             Comparte con la mayor claridad posible lo que
@@ -263,8 +288,9 @@ function submit() {
                         <Textarea
                             id="description"
                             v-model="form.description"
-                            rows="5"
+                            rows="8"
                             placeholder="Escribe aquí tu mensaje..."
+                            class="transition-colors hover:border-gold/60"
                         />
                         <p class="text-xs text-muted-foreground">
                             Mínimo 20 caracteres.
@@ -273,14 +299,21 @@ function submit() {
                         <InputError :message="form.errors.description" />
                     </div>
 
-                    <div class="space-y-2">
-                        <Label>Adjuntar evidencia</Label>
+                    <div
+                        class="animate-in space-y-2 fade-in slide-in-from-bottom-2 delay-300 duration-500"
+                    >
+                        <Label>Adjuntar evidencia (opcional)</Label>
+                        <p class="text-xs text-muted-foreground">
+                            Si cuentas con capturas, fotos u otro documento,
+                            compártelo aquí. No es obligatorio, pero ayuda a
+                            dar mejor seguimiento a tu mensaje.
+                        </p>
                         <FileDropzone v-model="form.attachments" />
                         <InputError :message="form.errors.attachments" />
                     </div>
 
                     <div
-                        class="flex items-start gap-3 rounded-lg border bg-muted/40 p-4"
+                        class="animate-in flex items-start gap-3 rounded-lg border bg-muted/40 p-4 fade-in slide-in-from-bottom-2 delay-300 duration-500 transition-colors hover:border-gold/40 hover:bg-gold/5"
                     >
                         <Checkbox
                             id="accepted_terms"

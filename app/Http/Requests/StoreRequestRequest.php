@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Department;
 use App\Enums\RequestType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -21,7 +20,7 @@ class StoreRequestRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:255'],
-            'department' => ['required', 'string', Rule::in(array_column(Department::cases(), 'value'))],
+            'department' => ['required', 'string', 'max:255'],
             'request_type' => ['required', 'string', Rule::in(array_column(RequestType::cases(), 'value'))],
             'incident_date' => ['nullable', 'date', 'before_or_equal:today'],
             'involved_people' => ['nullable', 'string', 'max:2000'],
@@ -43,8 +42,7 @@ class StoreRequestRequest extends FormRequest
     {
         return [
             'full_name.required' => 'Escribe tu nombre completo.',
-            'department.required' => 'Selecciona el área o departamento.',
-            'department.in' => 'El área o departamento seleccionada no es válida.',
+            'department.required' => 'Indica el área o departamento.',
             'request_type.required' => 'Selecciona el tipo de mensaje.',
             'request_type.in' => 'El tipo de mensaje seleccionado no es válido.',
             'incident_date.date' => 'La fecha indicada no es válida.',

@@ -22,6 +22,21 @@ const emit = defineEmits<{
 
 const maxDate = today(getLocalTimeZone());
 
+const MESES = [
+    'enero',
+    'febrero',
+    'marzo',
+    'abril',
+    'mayo',
+    'junio',
+    'julio',
+    'agosto',
+    'septiembre',
+    'octubre',
+    'noviembre',
+    'diciembre',
+];
+
 const calendarValue = computed<CalendarDate | undefined>({
     get: () => (props.modelValue ? parseDate(props.modelValue) : undefined),
     set: (value) => emit('update:modelValue', value ? value.toString() : null),
@@ -32,13 +47,12 @@ const displayLabel = computed(() => {
         return null;
     }
 
-    const date = new Date(`${props.modelValue}T00:00:00`);
+    // Se calcula a partir de los componentes del string ISO (YYYY-MM-DD),
+    // sin pasar por `Date`, para evitar que el desfase de zona horaria
+    // muestre un día antes o después del seleccionado.
+    const [year, month, day] = props.modelValue.split('-').map(Number);
 
-    return new Intl.DateTimeFormat('es-MX', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-    }).format(date);
+    return `${day} de ${MESES[month - 1]} de ${year}`;
 });
 </script>
 
@@ -63,6 +77,7 @@ const displayLabel = computed(() => {
         <PopoverContent class="w-auto p-0" align="start">
             <Calendar
                 v-model="calendarValue"
+                locale="es-MX"
                 :max-value="maxDate"
                 initial-focus
             />
