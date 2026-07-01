@@ -139,11 +139,11 @@ function submit() {
     <Head>
         <meta
             name="description"
-            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias, reportes e incidentes internos de forma segura y organizada."
+            content="Canal de atención de Solariega Cenit para recibir comentarios, sugerencias y mensajes de seguimiento de forma segura y organizada."
         />
         <meta
             name="keywords"
-            content="Buzón Solariega, Solariega Cenit, quejas, sugerencias, reportes internos, buzón confidencial, ambiente laboral"
+            content="Buzón Solariega, Solariega Cenit, atención, comentarios, sugerencias, seguimiento, experiencia, mejora continua"
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://buzon.solariegacenit.com/reportar" />
@@ -151,7 +151,7 @@ function submit() {
         <meta property="og:title" content="Buzón Solariega" />
         <meta
             property="og:description"
-            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias y reportes internos."
+            content="Canal de atención de Solariega Cenit para compartir comentarios, sugerencias y mensajes de seguimiento."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://buzon.solariegacenit.com/reportar" />
@@ -161,21 +161,8 @@ function submit() {
         <meta name="twitter:title" content="Buzón Solariega" />
         <meta
             name="twitter:description"
-            content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias y reportes internos."
+            content="Canal de atención de Solariega Cenit para compartir comentarios, sugerencias y mensajes de seguimiento."
         />
-
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "Buzón Solariega",
-                "url": "https://buzon.solariegacenit.com",
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "Solariega Cenit"
-                }
-            }
-        </script>
     </Head>
 
     <PublicPageShell>

@@ -40,6 +40,21 @@
         <x-inertia::head>
             <title>{{ config('app.name', 'Buzón Solariega') }}</title>
         </x-inertia::head>
+
+        @if (request()->routeIs('reportar.create'))
+            <script type="application/ld+json">
+                {!! json_encode([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebSite',
+                    'name' => 'Buzón Solariega',
+                    'url' => 'https://buzon.solariegacenit.com',
+                    'publisher' => [
+                        '@type' => 'Organization',
+                        'name' => 'Solariega Cenit',
+                    ],
+                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+            </script>
+        @endif
     </head>
     <body class="font-sans antialiased">
         <x-inertia::app />
