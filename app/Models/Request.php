@@ -124,8 +124,10 @@ class Request extends Model
             $search = $filters['search'];
             $query->where(function (Builder $q) use ($search) {
                 $q->where('folio', 'like', "%{$search}%")
+                    ->orWhere('full_name', 'like', "%{$search}%")
+                    ->orWhere('contact_info', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('involved_people', 'like', "%{$search}%")
                     ->orWhere('department', 'like', "%{$search}%");
             });
         }
@@ -138,16 +140,8 @@ class Request extends Model
             $query->where('request_type', $filters['request_type']);
         }
 
-        if (! empty($filters['urgency_level'])) {
-            $query->where('urgency_level', $filters['urgency_level']);
-        }
-
         if (! empty($filters['department'])) {
             $query->where('department', $filters['department']);
-        }
-
-        if (array_key_exists('is_anonymous', $filters) && $filters['is_anonymous'] !== null && $filters['is_anonymous'] !== '') {
-            $query->where('is_anonymous', filter_var($filters['is_anonymous'], FILTER_VALIDATE_BOOLEAN));
         }
 
         if (array_key_exists('has_evidence', $filters) && $filters['has_evidence'] !== null && $filters['has_evidence'] !== '') {

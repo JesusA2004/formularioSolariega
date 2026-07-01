@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-defineProps<{
-    title: string;
-}>();
+withDefaults(
+    defineProps<{
+        title: string;
+        hint?: string;
+        height?: string;
+    }>(),
+    {
+        hint: 'Haz clic en un dato para filtrar el listado',
+        height: 'h-72',
+    },
+);
 </script>
 
 <template>
-    <Card class="transition-shadow hover:shadow-md">
-        <CardHeader>
-            <CardTitle class="text-sm font-medium text-muted-foreground">{{
-                title
-            }}</CardTitle>
+    <Card
+        class="animate-in gap-4 rounded-2xl fade-in slide-in-from-bottom-2 duration-500 hover:border-gold/40 hover:shadow-lg"
+    >
+        <CardHeader class="gap-1">
+            <CardTitle class="text-base font-semibold">{{ title }}</CardTitle>
+            <p class="text-xs text-muted-foreground">{{ hint }}</p>
         </CardHeader>
-        <CardContent class="h-64">
+        <CardContent :class="height">
             <slot />
         </CardContent>
     </Card>

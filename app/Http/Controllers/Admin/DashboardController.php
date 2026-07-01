@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Contracts\LabeledEnum;
-use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
-use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
 use App\Models\Request as BuzonRequest;
 use Illuminate\Support\Carbon;
@@ -20,11 +18,11 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'stats' => $this->stats(),
             'charts' => [
-                'byType' => $this->countBy('request_type', RequestType::cases()),
-                'byUrgency' => $this->countBy('urgency_level', UrgencyLevel::cases()),
-                'byDepartment' => $this->countBy('department', Department::cases()),
-                'byStatus' => $this->countBy('status', RequestStatus::cases()),
                 'byMonth' => $this->countByMonth(),
+                'byType' => $this->countByEnum('request_type', RequestType::cases()),
+                'byDepartment' => $this->countByDepartment(),
+                'byStatus' => $this->countByEnum('status', RequestStatus::cases()),
+                'byEvidence' => $this->countByEvidence(),
             ],
             'recent' => BuzonRequest::query()
                 ->latest()
@@ -35,12 +33,10 @@ class DashboardController extends Controller
                     'folio' => $request->folio,
                     'request_type' => $request->request_type->value,
                     'request_type_label' => $request->request_type->label(),
-                    'department_label' => Department::tryFrom($request->department)?->label() ?? $request->department,
-                    'urgency_level' => $request->urgency_level->value,
-                    'urgency_level_label' => $request->urgency_level->label(),
+                    'department_label' => $request->department,
                     'status' => $request->status->value,
                     'status_label' => $request->status->label(),
-                    'is_anonymous' => $request->is_anonymous,
+                    'has_evidence' => $request->has_evidence,
                     'created_at' => $request->created_at?->toIso8601String(),
                 ]),
         ]);
@@ -57,17 +53,16 @@ class DashboardController extends Controller
             'en_revision' => BuzonRequest::where('status', RequestStatus::EnRevision)->count(),
             'atendido' => BuzonRequest::where('status', RequestStatus::Atendido)->count(),
             'cerrado' => BuzonRequest::where('status', RequestStatus::Cerrado)->count(),
-            'criticas' => BuzonRequest::where('urgency_level', UrgencyLevel::Critico)->count(),
-            'anonimas' => BuzonRequest::where('is_anonymous', true)->count(),
             'con_evidencia' => BuzonRequest::where('has_evidence', true)->count(),
+            'este_mes' => BuzonRequest::where('created_at', '>=', Carbon::now()->startOfMonth())->count(),
         ];
     }
 
     /**
      * @param  array<int, LabeledEnum>  $cases
-     * @return array<int, array{label: string, value: int}>
+     * @return array<int, array{label: string, value: int, key: string}>
      */
-    private function countBy(string $column, array $cases): array
+    private function countByEnum(string $column, array $cases): array
     {
         $counts = BuzonRequest::query()
             ->select($column)
@@ -79,12 +74,55 @@ class DashboardController extends Controller
             ->map(fn (LabeledEnum $case) => [
                 'label' => $case->label(),
                 'value' => (int) ($counts[$case->value] ?? 0),
+                'key' => $case->value,
             ])
             ->all();
     }
 
     /**
-     * @return array<int, array{label: string, value: int}>
+     * El área/departamento ahora es texto libre, así que se agrupa por los
+     * valores reales capturados en vez de un catálogo fijo.
+     *
+     * @return array<int, array{label: string, value: int, key: string}>
+     */
+    private function countByDepartment(): array
+    {
+        return BuzonRequest::query()
+            ->select('department')
+            ->selectRaw('count(*) as total')
+            ->groupBy('department')
+            ->orderByDesc('total')
+            ->limit(8)
+            ->get()
+            ->map(fn ($row) => [
+                'label' => $row->department,
+                'value' => (int) $row->total,
+                'key' => $row->department,
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{label: string, value: int, key: string}>
+     */
+    private function countByEvidence(): array
+    {
+        return [
+            [
+                'label' => 'Con evidencia',
+                'value' => BuzonRequest::where('has_evidence', true)->count(),
+                'key' => '1',
+            ],
+            [
+                'label' => 'Sin evidencia',
+                'value' => BuzonRequest::where('has_evidence', false)->count(),
+                'key' => '0',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{label: string, value: int, dateFrom: string, dateTo: string}>
      */
     private function countByMonth(): array
     {
@@ -106,6 +144,8 @@ class DashboardController extends Controller
             $months[] = [
                 'label' => ucfirst($label),
                 'value' => (int) ($counts[$key] ?? 0),
+                'dateFrom' => $cursor->copy()->startOfMonth()->format('Y-m-d'),
+                'dateTo' => $cursor->copy()->endOfMonth()->format('Y-m-d'),
             ];
 
             $cursor->addMonth();

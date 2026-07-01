@@ -17,12 +17,10 @@ export type RequestSummary = {
     request_type: string;
     request_type_label: string;
     department_label: string;
-    location?: string | null;
-    urgency_level?: string;
-    urgency_level_label: string;
+    full_name: string | null;
+    contact_info: string | null;
     status: RequestStatusValue;
     status_label: string;
-    is_anonymous: boolean;
     has_evidence?: boolean;
     attachments_count?: number;
     created_at: string;
@@ -42,19 +40,14 @@ export type RequestDetail = {
     folio: string;
     request_type: string;
     request_type_label: string;
-    is_anonymous: boolean;
     full_name: string | null;
+    contact_info: string | null;
     department: string;
     department_label: string;
-    location: string | null;
     incident_date: string | null;
     description: string;
     involved_people: string | null;
-    urgency_level: string;
-    urgency_level_label: string;
     has_evidence: boolean;
-    wants_follow_up: boolean;
-    contact_info: string | null;
     status: RequestStatusValue;
     status_label: string;
     internal_notes: string | null;
@@ -68,6 +61,9 @@ export type RequestDetail = {
 export type ChartPoint = {
     label: string;
     value: number;
+    key?: string;
+    dateFrom?: string;
+    dateTo?: string;
 };
 
 export type PageLink = {
@@ -84,19 +80,4 @@ export type Paginated<T> = {
     total: number;
     current_page: number;
     last_page: number;
-};
-
-export const URGENCY_COLORS: Record<string, string> = {
-    bajo: 'emerald',
-    medio: 'amber',
-    alto: 'orange',
-    critico: 'red',
-};
-
-export const STATUS_COLORS: Record<RequestStatusValue, string> = {
-    recibido: 'blue',
-    en_revision: 'amber',
-    atendido: 'emerald',
-    cerrado: 'gray',
-    descartado: 'red',
 };
