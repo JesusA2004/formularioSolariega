@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Contracts\LabeledEnum;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
+use App\Exports\RequestsExcelExport;
 use App\Exports\RequestsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Request as BuzonRequest;
@@ -77,7 +78,7 @@ class ReportController extends Controller
     {
         $filters = $request->only(self::FILTER_KEYS);
 
-        return Excel::download(new RequestsExport($filters), 'reporte-buzon-'.now()->format('Y-m-d').'.xlsx');
+        return Excel::download(new RequestsExcelExport($filters), 'reporte-buzon-'.now()->format('Y-m-d').'.xlsx');
     }
 
     public function exportCsv(HttpRequest $request): BinaryFileResponse
@@ -131,7 +132,7 @@ class ReportController extends Controller
             ->map(fn (LabeledEnum $case) => [
                 'label' => $case->label(),
                 'value' => (int) ($counts[$case->value] ?? 0),
-                'key' => $case->value,
+                'key' => (string) $case->value,
             ])
             ->all();
     }
@@ -149,11 +150,14 @@ class ReportController extends Controller
             ->orderByDesc('total')
             ->limit(8)
             ->get()
-            ->map(fn ($row) => [
-                'label' => $row->department,
-                'value' => (int) $row->total,
-                'key' => $row->department,
-            ])
+            ->map(function ($row) {
+                /** @var object{department: string, total: int} $row */
+                return [
+                    'label' => $row->department,
+                    'value' => (int) $row->total,
+                    'key' => $row->department,
+                ];
+            })
             ->all();
     }
 

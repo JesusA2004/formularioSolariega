@@ -74,7 +74,7 @@ class DashboardController extends Controller
             ->map(fn (LabeledEnum $case) => [
                 'label' => $case->label(),
                 'value' => (int) ($counts[$case->value] ?? 0),
-                'key' => $case->value,
+                'key' => (string) $case->value,
             ])
             ->all();
     }
@@ -94,11 +94,14 @@ class DashboardController extends Controller
             ->orderByDesc('total')
             ->limit(8)
             ->get()
-            ->map(fn ($row) => [
-                'label' => $row->department,
-                'value' => (int) $row->total,
-                'key' => $row->department,
-            ])
+            ->map(function ($row) {
+                /** @var object{department: string, total: int} $row */
+                return [
+                    'label' => $row->department,
+                    'value' => (int) $row->total,
+                    'key' => $row->department,
+                ];
+            })
             ->all();
     }
 
