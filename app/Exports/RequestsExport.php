@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  */
 class RequestsExport implements FromCollection, ShouldAutoSize, WithEvents, WithHeadings, WithMapping, WithStyles, WithTitle
 {
-    private const COLUMN_COUNT = 14;
+    private const COLUMN_COUNT = 15;
 
     /**
      * @param  array<string, mixed>  $filters
@@ -35,6 +35,7 @@ class RequestsExport implements FromCollection, ShouldAutoSize, WithEvents, With
     {
         return BuzonRequest::query()
             ->withCount('attachments')
+            ->with('attachments')
             ->filter($this->filters)
             ->latest()
             ->get();
@@ -62,6 +63,7 @@ class RequestsExport implements FromCollection, ShouldAutoSize, WithEvents, With
             'Estado',
             'Tiene evidencia',
             'Cantidad de archivos',
+            'Nombres de archivos',
             'Notas internas',
             'Fecha de revisión',
             'Fecha de cierre',
@@ -86,6 +88,7 @@ class RequestsExport implements FromCollection, ShouldAutoSize, WithEvents, With
             $request->status->label(),
             $request->has_evidence ? 'Sí' : 'No',
             (string) $request->attachments_count,
+            $request->attachments->pluck('original_name')->implode(', '),
             $request->internal_notes ?? '',
             $request->reviewed_at?->format('d/m/Y H:i') ?? '',
             $request->closed_at?->format('d/m/Y H:i') ?? '',

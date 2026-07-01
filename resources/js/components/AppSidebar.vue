@@ -62,11 +62,17 @@ const mainNavItems = computed<NavItem[]>(() => [
         <SidebarHeader>
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()" class="gap-3">
-                            <BrandMark class="size-8 shrink-0 text-sm" />
+                    <SidebarMenuButton
+                        size="lg"
+                        as-child
+                        class="h-auto py-2 group-data-[collapsible=icon]:!size-9 group-data-[collapsible=icon]:!p-1"
+                    >
+                        <Link :href="dashboard()" class="gap-2.5">
+                            <BrandMark
+                                class="h-9 w-auto max-w-[140px] shrink-0 group-data-[collapsible=icon]:max-w-7"
+                            />
                             <span
-                                class="grid flex-1 text-left text-sm leading-tight"
+                                class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
                             >
                                 <span class="truncate font-semibold"
                                     >Buzón Solariega</span
