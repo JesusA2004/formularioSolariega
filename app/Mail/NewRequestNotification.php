@@ -21,14 +21,14 @@ class NewRequestNotification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Nueva solicitud recibida en el buzón - {$this->request->folio}",
+            subject: 'Nuevo mensaje recibido - Buzón Solariega',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.requests.new-request',
+            view: 'emails.requests.new-request',
             with: [
                 'request' => $this->request,
                 'panelUrl' => route('solicitudes.show', $this->request),
