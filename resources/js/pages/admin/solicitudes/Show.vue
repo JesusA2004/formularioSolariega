@@ -65,6 +65,7 @@ function formatDate(value: string | null) {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
+        timeZone: 'UTC',
     }).format(new Date(value));
 }
 
@@ -86,7 +87,7 @@ function formatDateTime(value: string | null) {
 <template>
     <Head :title="request.folio" />
 
-    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
+    <div class="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
         <div class="flex items-center justify-between">
             <Button as-child variant="ghost" size="sm">
                 <Link :href="solicitudes.index()">
@@ -98,7 +99,7 @@ function formatDateTime(value: string | null) {
 
         <!-- Información general -->
         <Card
-            class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in rounded-2xl duration-500 fade-in slide-in-from-bottom-2"
         >
             <CardContent
                 class="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between"
@@ -124,113 +125,123 @@ function formatDateTime(value: string | null) {
             </CardContent>
         </Card>
 
-        <div class="grid gap-6 lg:grid-cols-3">
-            <div class="space-y-6 lg:col-span-2">
-                <!-- Sección 1: Datos del colaborador -->
-                <Card
-                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-100 duration-500 hover:border-gold/30"
-                >
-                    <CardHeader>
-                        <CardTitle
-                            class="flex items-center gap-2 text-sm font-semibold"
-                        >
-                            <UserRound class="size-4" /> Datos del colaborador
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <dl class="grid gap-3 sm:grid-cols-3">
-                            <div>
-                                <dt class="text-xs text-muted-foreground">
-                                    Nombre completo
-                                </dt>
-                                <dd class="text-sm font-medium">
-                                    {{
-                                        request.full_name || 'No proporcionado'
-                                    }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="text-xs text-muted-foreground">
-                                    Correo o teléfono
-                                </dt>
-                                <dd class="text-sm font-medium">
-                                    {{
-                                        request.contact_info ||
-                                        'No proporcionado'
-                                    }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="text-xs text-muted-foreground">
-                                    Área o departamento
-                                </dt>
-                                <dd class="text-sm font-medium">
-                                    {{ request.department_label }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </CardContent>
-                </Card>
-
-                <!-- Sección 2: Mensaje -->
-                <Card
-                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-150 duration-500 hover:border-gold/30"
-                >
-                    <CardHeader>
-                        <CardTitle
-                            class="flex items-center gap-2 text-sm font-semibold"
-                        >
-                            <MessageSquareText class="size-4" /> Mensaje
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent class="space-y-4">
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            <div>
-                                <dt class="text-xs text-muted-foreground">
-                                    Tipo de mensaje
-                                </dt>
-                                <dd class="text-sm font-medium">
-                                    {{ request.request_type_label }}
-                                </dd>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <Calendar
-                                    class="size-3.5 text-muted-foreground"
-                                />
+        <div class="grid gap-6 xl:grid-cols-4">
+            <div class="space-y-6 xl:col-span-3">
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <!-- Sección 1: Datos del colaborador -->
+                    <Card
+                        class="animate-in rounded-2xl delay-100 duration-500 fade-in slide-in-from-bottom-2 hover:border-gold/30"
+                    >
+                        <CardHeader>
+                            <CardTitle
+                                class="flex items-center gap-2 text-sm font-semibold"
+                            >
+                                <UserRound class="size-4" /> Datos del
+                                colaborador
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <dl class="grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <dt class="text-xs text-muted-foreground">
-                                        Fecha aproximada
+                                        Nombre completo
                                     </dt>
                                     <dd class="text-sm font-medium">
-                                        {{ formatDate(request.incident_date) }}
+                                        {{
+                                            request.full_name ||
+                                            'No proporcionado'
+                                        }}
                                     </dd>
                                 </div>
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">
+                                        Correo o teléfono
+                                    </dt>
+                                    <dd class="text-sm font-medium">
+                                        {{
+                                            request.contact_info ||
+                                            'No proporcionado'
+                                        }}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">
+                                        Área o departamento
+                                    </dt>
+                                    <dd class="text-sm font-medium">
+                                        {{ request.department_label }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+                    </Card>
+
+                    <!-- Sección 2: Mensaje -->
+                    <Card
+                        class="animate-in rounded-2xl delay-150 duration-500 fade-in slide-in-from-bottom-2 hover:border-gold/30"
+                    >
+                        <CardHeader>
+                            <CardTitle
+                                class="flex items-center gap-2 text-sm font-semibold"
+                            >
+                                <MessageSquareText class="size-4" /> Mensaje
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">
+                                        Tipo de mensaje
+                                    </dt>
+                                    <dd class="text-sm font-medium">
+                                        {{ request.request_type_label }}
+                                    </dd>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <Calendar
+                                        class="size-3.5 text-muted-foreground"
+                                    />
+                                    <div>
+                                        <dt
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Fecha aproximada
+                                        </dt>
+                                        <dd class="text-sm font-medium">
+                                            {{
+                                                formatDate(
+                                                    request.incident_date,
+                                                )
+                                            }}
+                                        </dd>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div v-if="request.involved_people">
-                            <dt class="mb-1 text-xs text-muted-foreground">
-                                Personas relacionadas
-                            </dt>
-                            <dd class="text-sm whitespace-pre-line">
-                                {{ request.involved_people }}
-                            </dd>
-                        </div>
+                            <div v-if="request.involved_people">
+                                <dt class="mb-1 text-xs text-muted-foreground">
+                                    Personas relacionadas
+                                </dt>
+                                <dd class="text-sm whitespace-pre-line">
+                                    {{ request.involved_people }}
+                                </dd>
+                            </div>
 
-                        <div class="border-t pt-4">
-                            <dt class="mb-1 text-xs text-muted-foreground">
-                                Descripción
-                            </dt>
-                            <dd class="text-sm whitespace-pre-line">
-                                {{ request.description }}
-                            </dd>
-                        </div>
-                    </CardContent>
-                </Card>
+                            <div class="border-t pt-4">
+                                <dt class="mb-1 text-xs text-muted-foreground">
+                                    Descripción
+                                </dt>
+                                <dd class="text-sm whitespace-pre-line">
+                                    {{ request.description }}
+                                </dd>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 <!-- Sección 3: Evidencia -->
                 <Card
-                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-200 duration-500 hover:border-gold/30"
+                    class="animate-in rounded-2xl delay-200 duration-500 fade-in slide-in-from-bottom-2 hover:border-gold/30"
                 >
                     <CardHeader>
                         <CardTitle class="text-sm font-semibold"
@@ -247,7 +258,10 @@ function formatDateTime(value: string | null) {
                                 No se adjuntaron archivos con este mensaje.
                             </p>
                         </div>
-                        <ul v-else class="grid gap-3 sm:grid-cols-2">
+                        <ul
+                            v-else
+                            class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                        >
                             <li
                                 v-for="file in request.attachments"
                                 :key="file.id"
@@ -313,7 +327,7 @@ function formatDateTime(value: string | null) {
             <!-- Sección 4: Seguimiento interno -->
             <div class="space-y-6">
                 <Card
-                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-100 duration-500 lg:sticky lg:top-6"
+                    class="animate-in rounded-2xl delay-100 duration-500 fade-in slide-in-from-bottom-2 lg:sticky lg:top-6"
                 >
                     <CardHeader>
                         <CardTitle

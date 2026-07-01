@@ -26,6 +26,7 @@ const { isCurrentUrl } = useCurrentUrl();
                     as-child
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"
+                    class="transition-colors duration-200"
                 >
                     <Link :href="item.href">
                         <component :is="item.icon" />

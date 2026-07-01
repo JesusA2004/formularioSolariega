@@ -26,7 +26,6 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
 
     Route::get('reportes', [ReportController::class, 'index'])->name('reportes.index');
     Route::get('reportes/exportar/excel', [ReportController::class, 'exportExcel'])->name('reportes.export.excel');
-    Route::get('reportes/exportar/csv', [ReportController::class, 'exportCsv'])->name('reportes.export.csv');
     Route::get('reportes/exportar/pdf', [ReportController::class, 'exportPdf'])->name('reportes.export.pdf');
 
     Route::get('configuracion/qr', [QrController::class, 'index'])->name('qr.index');

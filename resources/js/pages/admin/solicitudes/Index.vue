@@ -148,9 +148,7 @@ const hasActiveFilters = computed(
     <Head title="Mensajes" />
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        <div
-            class="animate-in duration-500 fade-in slide-in-from-bottom-2"
-        >
+        <div class="animate-in duration-500 fade-in slide-in-from-bottom-2">
             <h1 class="text-3xl font-semibold">Mensajes</h1>
             <p class="text-sm text-muted-foreground">
                 Consulta y da seguimiento a todos los mensajes recibidos.
@@ -158,7 +156,7 @@ const hasActiveFilters = computed(
         </div>
 
         <div
-            class="animate-in rounded-2xl border bg-card p-4 fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in rounded-2xl border bg-card p-4 duration-500 fade-in slide-in-from-bottom-2"
         >
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="relative sm:col-span-2 lg:col-span-2">
@@ -173,7 +171,8 @@ const hasActiveFilters = computed(
                 </div>
 
                 <Select v-model="status">
-                    <SelectTrigger class="w-full transition-colors hover:border-gold/50"
+                    <SelectTrigger
+                        class="w-full transition-colors hover:border-gold/50"
                         ><SelectValue placeholder="Estado"
                     /></SelectTrigger>
                     <SelectContent>
@@ -188,7 +187,8 @@ const hasActiveFilters = computed(
                 </Select>
 
                 <Select v-model="requestType">
-                    <SelectTrigger class="w-full transition-colors hover:border-gold/50"
+                    <SelectTrigger
+                        class="w-full transition-colors hover:border-gold/50"
                         ><SelectValue placeholder="Tipo de mensaje"
                     /></SelectTrigger>
                     <SelectContent>
@@ -203,7 +203,8 @@ const hasActiveFilters = computed(
                 </Select>
 
                 <Select v-model="department">
-                    <SelectTrigger class="w-full transition-colors hover:border-gold/50"
+                    <SelectTrigger
+                        class="w-full transition-colors hover:border-gold/50"
                         ><SelectValue placeholder="Departamento"
                     /></SelectTrigger>
                     <SelectContent>
@@ -220,7 +221,8 @@ const hasActiveFilters = computed(
                 </Select>
 
                 <Select v-model="hasEvidence">
-                    <SelectTrigger class="w-full transition-colors hover:border-gold/50"
+                    <SelectTrigger
+                        class="w-full transition-colors hover:border-gold/50"
                         ><SelectValue placeholder="Evidencia"
                     /></SelectTrigger>
                     <SelectContent>
@@ -248,7 +250,7 @@ const hasActiveFilters = computed(
         </div>
 
         <div
-            class="animate-in overflow-hidden rounded-2xl border bg-card fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in overflow-hidden rounded-2xl border bg-card duration-500 fade-in slide-in-from-bottom-2"
         >
             <div class="overflow-x-auto">
                 <Table>
@@ -259,7 +261,7 @@ const hasActiveFilters = computed(
                                 @click="toggleSort('created_at')"
                             >
                                 <span class="inline-flex items-center gap-1"
-                                    >Fecha
+                                    >Fecha de envío
                                     <component
                                         :is="sortIcon('created_at')"
                                         class="size-3.5"
@@ -328,7 +330,9 @@ const hasActiveFilters = computed(
                                 <p class="font-medium">
                                     {{ item.full_name ?? '—' }}
                                 </p>
-                                <p class="font-mono text-[11px] text-muted-foreground">
+                                <p
+                                    class="font-mono text-[11px] text-muted-foreground"
+                                >
                                     {{ item.folio }}
                                 </p>
                             </TableCell>

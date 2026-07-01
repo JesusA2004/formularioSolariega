@@ -25,6 +25,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useChartTheme } from '@/composables/useChartTheme';
 import { useMounted } from '@/composables/useMounted';
 import { chartPalette } from '@/lib/chart';
 import { dashboard } from '@/routes';
@@ -58,6 +59,7 @@ const props = defineProps<{
 }>();
 
 const isMounted = useMounted();
+const { foreColor } = useChartTheme();
 
 const statusColors = ['#3B82F6', '#D4AF37', '#22C55E', '#64748B', '#EF4444'];
 const evidenceColors = ['#8B5CF6', '#64748B'];
@@ -71,11 +73,7 @@ function goToList(params: Record<string, string>) {
 }
 
 function makeSelectHandler(points: ChartPoint[], param: string) {
-    return (
-        _event: unknown,
-        _chart: unknown,
-        options?: ApexChartEventOpts,
-    ) => {
+    return (_event: unknown, _chart: unknown, options?: ApexChartEventOpts) => {
         const point =
             options?.dataPointIndex !== undefined
                 ? points[options.dataPointIndex]
@@ -96,6 +94,7 @@ const monthOptions = computed<ApexOptions>(() => ({
         type: 'area',
         toolbar: { show: false },
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        foreColor: foreColor.value,
         events: {
             dataPointSelection: (
                 _e: unknown,
@@ -143,9 +142,17 @@ const typeOptions = computed<ApexOptions>(() => ({
         type: 'bar',
         toolbar: { show: false },
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
-        events: { dataPointSelection: makeSelectHandler(props.charts.byType, 'request_type') },
+        foreColor: foreColor.value,
+        events: {
+            dataPointSelection: makeSelectHandler(
+                props.charts.byType,
+                'request_type',
+            ),
+        },
     },
-    plotOptions: { bar: { distributed: true, borderRadius: 6, columnWidth: '55%' } },
+    plotOptions: {
+        bar: { distributed: true, borderRadius: 6, columnWidth: '55%' },
+    },
     colors: chartPalette,
     legend: { show: false },
     dataLabels: { enabled: false },
@@ -161,12 +168,21 @@ const departmentOptions = computed<ApexOptions>(() => ({
         type: 'bar',
         toolbar: { show: false },
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        foreColor: foreColor.value,
         events: {
-            dataPointSelection: makeSelectHandler(props.charts.byDepartment, 'department'),
+            dataPointSelection: makeSelectHandler(
+                props.charts.byDepartment,
+                'department',
+            ),
         },
     },
     plotOptions: {
-        bar: { horizontal: true, distributed: true, borderRadius: 6, barHeight: '60%' },
+        bar: {
+            horizontal: true,
+            distributed: true,
+            borderRadius: 6,
+            barHeight: '60%',
+        },
     },
     colors: chartPalette,
     legend: { show: false },
@@ -180,7 +196,13 @@ const statusOptions = computed<ApexOptions>(() => ({
     chart: {
         type: 'donut',
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
-        events: { dataPointSelection: makeSelectHandler(props.charts.byStatus, 'status') },
+        foreColor: foreColor.value,
+        events: {
+            dataPointSelection: makeSelectHandler(
+                props.charts.byStatus,
+                'status',
+            ),
+        },
     },
     labels: props.charts.byStatus.map((p) => p.label),
     colors: statusColors,
@@ -189,14 +211,20 @@ const statusOptions = computed<ApexOptions>(() => ({
     plotOptions: { pie: { donut: { size: '70%' } } },
 }));
 
-const evidenceSeries = computed(() => props.charts.byEvidence.map((p) => p.value));
+const evidenceSeries = computed(() =>
+    props.charts.byEvidence.map((p) => p.value),
+);
 
 const evidenceOptions = computed<ApexOptions>(() => ({
     chart: {
         type: 'donut',
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        foreColor: foreColor.value,
         events: {
-            dataPointSelection: makeSelectHandler(props.charts.byEvidence, 'has_evidence'),
+            dataPointSelection: makeSelectHandler(
+                props.charts.byEvidence,
+                'has_evidence',
+            ),
         },
     },
     labels: props.charts.byEvidence.map((p) => p.label),
@@ -211,9 +239,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
     <Head title="Dashboard" />
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        <div
-            class="animate-in duration-500 fade-in slide-in-from-bottom-2"
-        >
+        <div class="animate-in duration-500 fade-in slide-in-from-bottom-2">
             <h1 class="text-3xl font-semibold">Panel administrativo</h1>
             <p class="text-sm text-muted-foreground">
                 Resumen general de mensajes recibidos en Buzón Solariega.
@@ -328,7 +354,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
         </div>
 
         <div
-            class="animate-in overflow-hidden rounded-2xl border bg-card fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in overflow-hidden rounded-2xl border bg-card duration-500 fade-in slide-in-from-bottom-2"
         >
             <div class="flex items-center justify-between border-b p-4">
                 <h2 class="text-base font-semibold">
@@ -349,7 +375,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
                             <TableHead>Departamento</TableHead>
                             <TableHead>Estado</TableHead>
                             <TableHead>Evidencia</TableHead>
-                            <TableHead>Fecha</TableHead>
+                            <TableHead>Fecha de envío</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

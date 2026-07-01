@@ -16,7 +16,7 @@ withDefaults(
 
 <template>
     <Card
-        class="animate-in gap-4 rounded-2xl fade-in slide-in-from-bottom-2 duration-500 hover:border-gold/40 hover:shadow-lg"
+        class="animate-in gap-4 rounded-2xl duration-500 fade-in slide-in-from-bottom-2 hover:border-gold/40 hover:shadow-lg"
     >
         <CardHeader class="gap-1">
             <CardTitle class="text-base font-semibold">{{ title }}</CardTitle>

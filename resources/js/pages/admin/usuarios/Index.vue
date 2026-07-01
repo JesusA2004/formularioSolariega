@@ -148,37 +148,41 @@ function confirmDelete() {
 <template>
     <Head title="Usuarios" />
 
-    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
+    <div class="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
         <div
-            class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"
+            class="flex animate-in flex-col justify-between gap-2 duration-500 fade-in slide-in-from-bottom-2 sm:flex-row sm:items-center"
         >
             <div>
-                <h1 class="text-2xl font-semibold">Usuarios</h1>
+                <h1 class="text-3xl font-semibold">Usuarios</h1>
                 <p class="text-sm text-muted-foreground">
                     Administra las cuentas con acceso al panel administrativo.
                 </p>
             </div>
-            <Button @click="createOpen = true">
+            <Button size="lg" @click="createOpen = true">
                 <Plus class="size-4" />
                 Nuevo usuario
             </Button>
         </div>
 
-        <Card>
+        <Card
+            class="animate-in overflow-hidden rounded-2xl duration-500 fade-in slide-in-from-bottom-2"
+        >
             <CardContent class="p-0">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nombre</TableHead>
-                            <TableHead>Correo</TableHead>
-                            <TableHead>Rol</TableHead>
-                            <TableHead>Estado</TableHead>
-                            <TableHead class="text-right">Acciones</TableHead>
+                            <TableHead class="py-4 text-sm">Nombre</TableHead>
+                            <TableHead class="text-sm">Correo</TableHead>
+                            <TableHead class="text-sm">Rol</TableHead>
+                            <TableHead class="text-sm">Estado</TableHead>
+                            <TableHead class="text-right text-sm"
+                                >Acciones</TableHead
+                            >
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="users.length === 0">
-                            <TableCell colspan="5" class="py-12 text-center">
+                            <TableCell colspan="5" class="py-16 text-center">
                                 <div
                                     class="flex flex-col items-center gap-2 text-muted-foreground"
                                 >
@@ -189,21 +193,26 @@ function confirmDelete() {
                                 </div>
                             </TableCell>
                         </TableRow>
-                        <TableRow v-for="user in users" :key="user.id">
-                            <TableCell class="font-medium">{{
+                        <TableRow
+                            v-for="user in users"
+                            :key="user.id"
+                            class="transition-colors hover:bg-accent/30"
+                        >
+                            <TableCell class="py-4 text-base font-medium">{{
                                 user.name
                             }}</TableCell>
-                            <TableCell class="text-muted-foreground">{{
+                            <TableCell class="text-sm text-muted-foreground">{{
                                 user.email
                             }}</TableCell>
                             <TableCell>
-                                <Badge variant="secondary">{{
+                                <Badge variant="secondary" class="text-sm">{{
                                     user.role_label
                                 }}</Badge>
                             </TableCell>
                             <TableCell>
                                 <Badge
                                     variant="outline"
+                                    class="text-sm"
                                     :class="
                                         user.is_active
                                             ? 'border-primary/30 bg-primary/10 text-primary'
@@ -214,34 +223,34 @@ function confirmDelete() {
                                 </Badge>
                             </TableCell>
                             <TableCell class="text-right">
-                                <div class="flex justify-end gap-1.5">
+                                <div class="flex justify-end gap-2">
                                     <Button
-                                        size="icon-sm"
+                                        size="icon"
                                         variant="outline"
                                         title="Editar"
                                         aria-label="Editar usuario"
                                         @click="openEdit(user)"
                                     >
-                                        <Pencil class="size-3.5" />
+                                        <Pencil class="size-4" />
                                     </Button>
                                     <Button
-                                        size="icon-sm"
+                                        size="icon"
                                         variant="outline"
                                         title="Activar / desactivar"
                                         aria-label="Activar o desactivar usuario"
                                         @click="toggleActive(user)"
                                     >
-                                        <Power class="size-3.5" />
+                                        <Power class="size-4" />
                                     </Button>
                                     <Button
-                                        size="icon-sm"
+                                        size="icon"
                                         variant="outline"
                                         title="Eliminar"
                                         aria-label="Eliminar usuario"
                                         @click="deleteTarget = user"
                                     >
                                         <Trash2
-                                            class="size-3.5 text-destructive"
+                                            class="size-4 text-destructive"
                                         />
                                     </Button>
                                 </div>

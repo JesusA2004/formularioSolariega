@@ -10,7 +10,6 @@ import {
     Paperclip,
     RotateCcw,
     Search,
-    Table as TableIcon,
 } from '@lucide/vue';
 import type { ApexChartEventOpts, ApexOptions } from 'apexcharts';
 import { computed, ref, watch } from 'vue';
@@ -39,6 +38,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useChartTheme } from '@/composables/useChartTheme';
 import { useMounted } from '@/composables/useMounted';
 import { chartPalette } from '@/lib/chart';
 import { dashboard } from '@/routes';
@@ -84,6 +84,7 @@ const props = defineProps<{
 }>();
 
 const isMounted = useMounted();
+const { foreColor } = useChartTheme();
 
 const ALL = 'all';
 
@@ -150,11 +151,7 @@ function goToList(params: Record<string, string>) {
 }
 
 function makeSelectHandler(points: ChartPoint[], param: string) {
-    return (
-        _event: unknown,
-        _chart: unknown,
-        options?: ApexChartEventOpts,
-    ) => {
+    return (_event: unknown, _chart: unknown, options?: ApexChartEventOpts) => {
         const point =
             options?.dataPointIndex !== undefined
                 ? points[options.dataPointIndex]
@@ -178,9 +175,17 @@ const typeOptions = computed<ApexOptions>(() => ({
         type: 'bar',
         toolbar: { show: false },
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
-        events: { dataPointSelection: makeSelectHandler(props.charts.byType, 'request_type') },
+        foreColor: foreColor.value,
+        events: {
+            dataPointSelection: makeSelectHandler(
+                props.charts.byType,
+                'request_type',
+            ),
+        },
     },
-    plotOptions: { bar: { distributed: true, borderRadius: 6, columnWidth: '55%' } },
+    plotOptions: {
+        bar: { distributed: true, borderRadius: 6, columnWidth: '55%' },
+    },
     colors: chartPalette,
     legend: { show: false },
     dataLabels: { enabled: false },
@@ -196,12 +201,21 @@ const departmentOptions = computed<ApexOptions>(() => ({
         type: 'bar',
         toolbar: { show: false },
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        foreColor: foreColor.value,
         events: {
-            dataPointSelection: makeSelectHandler(props.charts.byDepartment, 'department'),
+            dataPointSelection: makeSelectHandler(
+                props.charts.byDepartment,
+                'department',
+            ),
         },
     },
     plotOptions: {
-        bar: { horizontal: true, distributed: true, borderRadius: 6, barHeight: '60%' },
+        bar: {
+            horizontal: true,
+            distributed: true,
+            borderRadius: 6,
+            barHeight: '60%',
+        },
     },
     colors: chartPalette,
     legend: { show: false },
@@ -215,7 +229,13 @@ const statusOptions = computed<ApexOptions>(() => ({
     chart: {
         type: 'donut',
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
-        events: { dataPointSelection: makeSelectHandler(props.charts.byStatus, 'status') },
+        foreColor: foreColor.value,
+        events: {
+            dataPointSelection: makeSelectHandler(
+                props.charts.byStatus,
+                'status',
+            ),
+        },
     },
     labels: props.charts.byStatus.map((p) => p.label),
     colors: statusColors,
@@ -224,14 +244,20 @@ const statusOptions = computed<ApexOptions>(() => ({
     plotOptions: { pie: { donut: { size: '70%' } } },
 }));
 
-const evidenceSeries = computed(() => props.charts.byEvidence.map((p) => p.value));
+const evidenceSeries = computed(() =>
+    props.charts.byEvidence.map((p) => p.value),
+);
 
 const evidenceOptions = computed<ApexOptions>(() => ({
     chart: {
         type: 'donut',
         fontFamily: 'Instrument Sans, ui-sans-serif, system-ui, sans-serif',
+        foreColor: foreColor.value,
         events: {
-            dataPointSelection: makeSelectHandler(props.charts.byEvidence, 'has_evidence'),
+            dataPointSelection: makeSelectHandler(
+                props.charts.byEvidence,
+                'has_evidence',
+            ),
         },
     },
     labels: props.charts.byEvidence.map((p) => p.label),
@@ -247,7 +273,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <div
-            class="flex animate-in flex-col justify-between gap-2 fade-in slide-in-from-bottom-2 duration-500 sm:flex-row sm:items-center"
+            class="flex animate-in flex-col justify-between gap-2 duration-500 fade-in slide-in-from-bottom-2 sm:flex-row sm:items-center"
         >
             <div>
                 <h1 class="text-3xl font-semibold">Reportes</h1>
@@ -263,11 +289,6 @@ const evidenceOptions = computed<ApexOptions>(() => ({
                     </a>
                 </Button>
                 <Button variant="outline" size="sm" as-child>
-                    <a :href="exportUrl(reportes.export.csv)">
-                        <TableIcon class="size-4" /> CSV
-                    </a>
-                </Button>
-                <Button variant="outline" size="sm" as-child>
                     <a :href="exportUrl(reportes.export.pdf)">
                         <FileText class="size-4" /> PDF
                     </a>
@@ -276,10 +297,10 @@ const evidenceOptions = computed<ApexOptions>(() => ({
         </div>
 
         <div
-            class="animate-in rounded-2xl border bg-card p-4 fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in rounded-2xl border bg-card p-4 duration-500 fade-in slide-in-from-bottom-2"
         >
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="relative sm:col-span-2">
+                <div class="relative self-start sm:col-span-2">
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                     />
@@ -454,7 +475,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
         </div>
 
         <div
-            class="animate-in overflow-hidden rounded-2xl border bg-card fade-in slide-in-from-bottom-2 duration-500"
+            class="animate-in overflow-hidden rounded-2xl border bg-card duration-500 fade-in slide-in-from-bottom-2"
         >
             <div class="border-b p-4">
                 <h2 class="flex items-center gap-2 text-sm font-semibold">
@@ -465,7 +486,7 @@ const evidenceOptions = computed<ApexOptions>(() => ({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Fecha</TableHead>
+                            <TableHead>Fecha de envío</TableHead>
                             <TableHead>Nombre</TableHead>
                             <TableHead>Contacto</TableHead>
                             <TableHead>Departamento</TableHead>
