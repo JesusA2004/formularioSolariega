@@ -2,18 +2,17 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import {
     ArrowLeft,
-    Building2,
     Calendar,
     Download,
     FileText,
     Image as ImageIcon,
+    MessageSquareText,
     Save,
     ShieldCheck,
     UserRound,
 } from '@lucide/vue';
+import EvidenceBadge from '@/components/admin/EvidenceBadge.vue';
 import StatusBadge from '@/components/admin/StatusBadge.vue';
-import UrgencyBadge from '@/components/admin/UrgencyBadge.vue';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -98,7 +97,9 @@ function formatDateTime(value: string | null) {
         </div>
 
         <!-- Información general -->
-        <Card>
+        <Card
+            class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 duration-500"
+        >
             <CardContent
                 class="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between"
             >
@@ -110,45 +111,37 @@ function formatDateTime(value: string | null) {
                         {{ request.request_type_label }}
                     </h1>
                     <p class="text-xs text-muted-foreground">
-                        Enviada el {{ formatDateTime(request.created_at) }}
+                        Enviado el {{ formatDateTime(request.created_at) }}
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <UrgencyBadge
-                        :level="request.urgency_level"
-                        :label="request.urgency_level_label"
-                    />
                     <StatusBadge
                         :status="request.status"
                         :label="request.status_label"
                     />
+                    <EvidenceBadge :has-evidence="request.has_evidence" />
                 </div>
             </CardContent>
         </Card>
 
         <div class="grid gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
-                <!-- Datos del solicitante -->
-                <Card>
+                <!-- Sección 1: Datos del colaborador -->
+                <Card
+                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-100 duration-500 hover:border-gold/30"
+                >
                     <CardHeader>
                         <CardTitle
                             class="flex items-center gap-2 text-sm font-semibold"
                         >
-                            <UserRound class="size-4" /> Datos del solicitante
+                            <UserRound class="size-4" /> Datos del colaborador
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Badge
-                            v-if="request.is_anonymous"
-                            variant="outline"
-                            class="border-gold/40 bg-gold/10 text-gold-foreground"
-                        >
-                            Mensaje anónimo
-                        </Badge>
-                        <dl v-else class="grid gap-3 sm:grid-cols-2">
+                        <dl class="grid gap-3 sm:grid-cols-3">
                             <div>
                                 <dt class="text-xs text-muted-foreground">
-                                    Nombre
+                                    Nombre completo
                                 </dt>
                                 <dd class="text-sm font-medium">
                                     {{
@@ -158,7 +151,7 @@ function formatDateTime(value: string | null) {
                             </div>
                             <div>
                                 <dt class="text-xs text-muted-foreground">
-                                    Contacto
+                                    Correo o teléfono
                                 </dt>
                                 <dd class="text-sm font-medium">
                                     {{
@@ -167,92 +160,98 @@ function formatDateTime(value: string | null) {
                                     }}
                                 </dd>
                             </div>
+                            <div>
+                                <dt class="text-xs text-muted-foreground">
+                                    Área o departamento
+                                </dt>
+                                <dd class="text-sm font-medium">
+                                    {{ request.department_label }}
+                                </dd>
+                            </div>
                         </dl>
                     </CardContent>
                 </Card>
 
-                <!-- Ubicación y departamento -->
-                <Card>
+                <!-- Sección 2: Mensaje -->
+                <Card
+                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-150 duration-500 hover:border-gold/30"
+                >
                     <CardHeader>
                         <CardTitle
                             class="flex items-center gap-2 text-sm font-semibold"
                         >
-                            <Building2 class="size-4" /> Ubicación y
-                            departamento
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent class="grid gap-3 sm:grid-cols-2">
-                        <div>
-                            <dt class="text-xs text-muted-foreground">
-                                Departamento
-                            </dt>
-                            <dd class="text-sm font-medium">
-                                {{ request.department_label }}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted-foreground">
-                                Ubicación
-                            </dt>
-                            <dd class="text-sm font-medium">
-                                {{ request.location ?? 'No especificada' }}
-                            </dd>
-                        </div>
-                        <div class="flex items-center gap-1.5 sm:col-span-2">
-                            <Calendar class="size-3.5 text-muted-foreground" />
-                            <dt class="text-xs text-muted-foreground">
-                                Fecha aproximada del hecho:
-                            </dt>
-                            <dd class="text-sm font-medium">
-                                {{ formatDate(request.incident_date) }}
-                            </dd>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <!-- Descripción -->
-                <Card>
-                    <CardHeader>
-                        <CardTitle
-                            class="flex items-center gap-2 text-sm font-semibold"
-                        >
-                            <FileText class="size-4" /> Descripción
+                            <MessageSquareText class="size-4" /> Mensaje
                         </CardTitle>
                     </CardHeader>
                     <CardContent class="space-y-4">
-                        <p class="text-sm whitespace-pre-line">
-                            {{ request.description }}
-                        </p>
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-xs text-muted-foreground">
+                                    Tipo de mensaje
+                                </dt>
+                                <dd class="text-sm font-medium">
+                                    {{ request.request_type_label }}
+                                </dd>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <Calendar
+                                    class="size-3.5 text-muted-foreground"
+                                />
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">
+                                        Fecha aproximada
+                                    </dt>
+                                    <dd class="text-sm font-medium">
+                                        {{ formatDate(request.incident_date) }}
+                                    </dd>
+                                </div>
+                            </div>
+                        </div>
+
                         <div v-if="request.involved_people">
                             <dt class="mb-1 text-xs text-muted-foreground">
-                                Personas involucradas
+                                Personas relacionadas
                             </dt>
                             <dd class="text-sm whitespace-pre-line">
                                 {{ request.involved_people }}
                             </dd>
                         </div>
+
+                        <div class="border-t pt-4">
+                            <dt class="mb-1 text-xs text-muted-foreground">
+                                Descripción
+                            </dt>
+                            <dd class="text-sm whitespace-pre-line">
+                                {{ request.description }}
+                            </dd>
+                        </div>
                     </CardContent>
                 </Card>
 
-                <!-- Evidencia -->
-                <Card>
+                <!-- Sección 3: Evidencia -->
+                <Card
+                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-200 duration-500 hover:border-gold/30"
+                >
                     <CardHeader>
                         <CardTitle class="text-sm font-semibold"
                             >Evidencia</CardTitle
                         >
                     </CardHeader>
                     <CardContent>
-                        <p
+                        <div
                             v-if="request.attachments.length === 0"
-                            class="text-sm text-muted-foreground"
+                            class="flex flex-col items-center gap-2 py-8 text-center text-muted-foreground"
                         >
-                            No se adjuntaron archivos con este mensaje.
-                        </p>
+                            <FileText class="size-8 opacity-40" />
+                            <p class="text-sm">
+                                No se adjuntaron archivos con este mensaje.
+                            </p>
+                        </div>
                         <ul v-else class="grid gap-3 sm:grid-cols-2">
                             <li
                                 v-for="file in request.attachments"
                                 :key="file.id"
-                                class="flex items-center gap-3 rounded-lg border p-3"
+                                class="flex items-center gap-3 rounded-xl border p-3 transition-colors hover:border-gold/40 hover:bg-accent/20"
                             >
                                 <div
                                     class="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted"
@@ -311,9 +310,11 @@ function formatDateTime(value: string | null) {
                 </Card>
             </div>
 
-            <!-- Seguimiento interno -->
+            <!-- Sección 4: Seguimiento interno -->
             <div class="space-y-6">
-                <Card>
+                <Card
+                    class="animate-in rounded-2xl fade-in slide-in-from-bottom-2 delay-100 duration-500 lg:sticky lg:top-6"
+                >
                     <CardHeader>
                         <CardTitle
                             class="flex items-center gap-2 text-sm font-semibold"
@@ -357,11 +358,11 @@ function formatDateTime(value: string | null) {
                             class="space-y-1 border-t pt-3 text-xs text-muted-foreground"
                         >
                             <p v-if="request.reviewed_by">
-                                Revisada por {{ request.reviewed_by }} —
+                                Revisado por {{ request.reviewed_by }} —
                                 {{ formatDateTime(request.reviewed_at) }}
                             </p>
                             <p v-if="request.closed_at">
-                                Cerrada el
+                                Cerrado el
                                 {{ formatDateTime(request.closed_at) }}
                             </p>
                         </div>
@@ -375,17 +376,6 @@ function formatDateTime(value: string | null) {
                             <Save v-else class="size-4" />
                             Guardar cambios
                         </Button>
-                    </CardContent>
-                </Card>
-
-                <Card v-if="request.wants_follow_up">
-                    <CardContent class="pt-6 text-sm">
-                        <Badge
-                            variant="outline"
-                            class="border-cafe/30 bg-cafe/10 text-cafe"
-                        >
-                            Solicita seguimiento
-                        </Badge>
                     </CardContent>
                 </Card>
             </div>

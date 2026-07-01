@@ -42,7 +42,6 @@ export type RequestDetail = {
     request_type_label: string;
     full_name: string | null;
     contact_info: string | null;
-    department: string;
     department_label: string;
     incident_date: string | null;
     description: string;

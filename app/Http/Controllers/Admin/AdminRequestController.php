@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\Department;
 use App\Enums\RequestStatus;
 use App\Enums\RequestType;
-use App\Enums\UrgencyLevel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\Request as BuzonRequest;
@@ -21,13 +19,13 @@ class AdminRequestController extends Controller
     public function index(HttpRequest $request): Response
     {
         $query = BuzonRequest::query()->filter($request->only([
-            'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence',
+            'search', 'status', 'request_type', 'department', 'has_evidence', 'date_from', 'date_to',
         ]));
 
         $sort = $request->string('sort')->toString() ?: 'created_at';
         $direction = $request->string('direction')->toString() === 'asc' ? 'asc' : 'desc';
 
-        $allowedSorts = ['created_at', 'folio', 'urgency_level', 'status', 'department'];
+        $allowedSorts = ['created_at', 'folio', 'status', 'department'];
 
         if (in_array($sort, $allowedSorts, true)) {
             $query->orderBy($sort, $direction);
@@ -43,14 +41,11 @@ class AdminRequestController extends Controller
                 'folio' => $r->folio,
                 'request_type' => $r->request_type->value,
                 'request_type_label' => $r->request_type->label(),
-                'department' => $r->department,
-                'department_label' => Department::tryFrom($r->department)?->label() ?? $r->department,
-                'location' => $r->location,
-                'urgency_level' => $r->urgency_level->value,
-                'urgency_level_label' => $r->urgency_level->label(),
+                'department_label' => $r->department,
+                'full_name' => $r->full_name,
+                'contact_info' => $r->contact_info,
                 'status' => $r->status->value,
                 'status_label' => $r->status->label(),
-                'is_anonymous' => $r->is_anonymous,
                 'has_evidence' => $r->has_evidence,
                 'attachments_count' => $r->attachments_count,
                 'created_at' => $r->created_at?->toIso8601String(),
@@ -59,7 +54,7 @@ class AdminRequestController extends Controller
         return Inertia::render('admin/solicitudes/Index', [
             'requests' => $requests,
             'filters' => $request->only([
-                'search', 'status', 'request_type', 'urgency_level', 'department', 'is_anonymous', 'has_evidence', 'sort', 'direction',
+                'search', 'status', 'request_type', 'department', 'has_evidence', 'date_from', 'date_to', 'sort', 'direction',
             ]),
             'options' => $this->filterOptions(),
         ]);
@@ -75,19 +70,13 @@ class AdminRequestController extends Controller
                 'folio' => $solicitud->folio,
                 'request_type' => $solicitud->request_type->value,
                 'request_type_label' => $solicitud->request_type->label(),
-                'is_anonymous' => $solicitud->is_anonymous,
                 'full_name' => $solicitud->full_name,
-                'department' => $solicitud->department,
-                'department_label' => Department::tryFrom($solicitud->department)?->label() ?? $solicitud->department,
-                'location' => $solicitud->location,
+                'contact_info' => $solicitud->contact_info,
+                'department_label' => $solicitud->department,
                 'incident_date' => $solicitud->incident_date?->format('Y-m-d'),
                 'description' => $solicitud->description,
                 'involved_people' => $solicitud->involved_people,
-                'urgency_level' => $solicitud->urgency_level->value,
-                'urgency_level_label' => $solicitud->urgency_level->label(),
                 'has_evidence' => $solicitud->has_evidence,
-                'wants_follow_up' => $solicitud->wants_follow_up,
-                'contact_info' => $solicitud->contact_info,
                 'status' => $solicitud->status->value,
                 'status_label' => $solicitud->status->label(),
                 'internal_notes' => $solicitud->internal_notes,
@@ -133,7 +122,7 @@ class AdminRequestController extends Controller
 
         $solicitud->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Solicitud actualizada correctamente.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Mensaje actualizado correctamente.']);
 
         return back();
     }
@@ -145,8 +134,13 @@ class AdminRequestController extends Controller
     {
         return [
             'requestTypes' => collect(RequestType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
-            'departments' => collect(Department::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
-            'urgencyLevels' => collect(UrgencyLevel::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
+            'departments' => BuzonRequest::query()
+                ->select('department')
+                ->distinct()
+                ->orderBy('department')
+                ->pluck('department')
+                ->map(fn ($department) => ['value' => $department, 'label' => $department])
+                ->all(),
             'statuses' => collect(RequestStatus::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])->all(),
         ];
     }
