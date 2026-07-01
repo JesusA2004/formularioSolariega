@@ -49,7 +49,7 @@ const displayLabel = computed(() => {
                 type="button"
                 :class="
                     cn(
-                        'flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-1 text-left text-sm shadow-xs transition-colors hover:bg-accent/40 dark:bg-input/30',
+                        'flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-1 text-left text-sm shadow-xs transition-colors hover:border-gold/60 hover:bg-accent/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/30 dark:bg-input/30',
                         !displayLabel && 'text-muted-foreground',
                     )
                 "

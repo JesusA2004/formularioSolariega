@@ -13,7 +13,7 @@ withDefaults(
     <div
         :class="
             cn(
-                'flex aspect-square items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 font-serif font-semibold text-white shadow-sm dark:from-emerald-500 dark:to-emerald-700',
+                'flex aspect-square items-center justify-center rounded-xl bg-gradient-to-br from-[#283B2A] to-[#10251B] font-serif font-semibold text-[#F7F1E6] shadow-sm ring-1 ring-[#C6A45A]/40',
                 $props.class,
             )
         "

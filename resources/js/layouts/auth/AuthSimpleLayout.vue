@@ -12,10 +12,10 @@ defineProps<{
 
 <template>
     <div
-        class="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 p-6 md:p-10"
+        class="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden bg-gradient-to-br from-[#10251B] via-[#17281f] to-[#10251B] p-6 md:p-10"
     >
         <div
-            class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,theme(colors.emerald.700/35%),transparent_45%),radial-gradient(circle_at_80%_0%,theme(colors.amber.500/15%),transparent_40%)]"
+            class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(40,59,42,0.35),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(198,164,90,0.18),transparent_40%)]"
         />
 
         <div
@@ -29,22 +29,22 @@ defineProps<{
                     >
                         <BrandMark class="size-14 text-xl" />
                         <span
-                            class="text-sm font-medium tracking-wide text-emerald-100"
+                            class="text-sm font-medium tracking-widest text-gold uppercase"
                             >Solariega Cenit</span
                         >
                     </Link>
                     <div class="space-y-2 text-center">
-                        <h1 class="text-xl font-semibold text-white">
+                        <h1 class="text-xl font-semibold text-marfil">
                             {{ title }}
                         </h1>
-                        <p class="text-center text-sm text-emerald-100/70">
+                        <p class="text-center text-sm text-marfil/70">
                             {{ description }}
                         </p>
                     </div>
                 </div>
 
                 <Card
-                    class="border-emerald-900/40 bg-card/95 shadow-2xl backdrop-blur"
+                    class="border-[#1b3226]/60 bg-card/95 shadow-2xl backdrop-blur"
                 >
                     <CardContent class="pt-6">
                         <slot />

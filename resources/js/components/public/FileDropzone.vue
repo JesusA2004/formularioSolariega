@@ -100,10 +100,10 @@ function openFileDialog() {
         <div
             :class="
                 cn(
-                    'group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors',
+                    'group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all duration-200',
                     isDragging
-                        ? 'border-primary bg-primary/5'
-                        : 'border-input hover:border-primary/60 hover:bg-accent/40',
+                        ? 'border-gold bg-gold/10 shadow-sm'
+                        : 'border-input hover:border-gold/60 hover:bg-accent/40',
                 )
             "
             @click="openFileDialog"

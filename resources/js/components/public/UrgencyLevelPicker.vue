@@ -19,30 +19,24 @@ const styles: Record<
 > = {
     bajo: {
         icon: Info,
-        selected:
-            'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/30 dark:bg-emerald-950/40',
-        iconWrap:
-            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
+        selected: 'border-primary bg-primary/5 ring-2 ring-primary/25',
+        iconWrap: 'bg-primary/10 text-primary',
     },
     medio: {
         icon: AlertTriangle,
-        selected:
-            'border-amber-500 bg-amber-50 ring-2 ring-amber-500/30 dark:bg-amber-950/40',
-        iconWrap:
-            'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+        selected: 'border-gold bg-gold/10 ring-2 ring-gold/30',
+        iconWrap: 'bg-gold/15 text-gold-foreground',
     },
     alto: {
         icon: ShieldAlert,
-        selected:
-            'border-orange-500 bg-orange-50 ring-2 ring-orange-500/30 dark:bg-orange-950/40',
-        iconWrap:
-            'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
+        selected: 'border-terracota bg-terracota/10 ring-2 ring-terracota/30',
+        iconWrap: 'bg-terracota/15 text-terracota',
     },
     critico: {
         icon: Flame,
         selected:
-            'border-red-500 bg-red-50 ring-2 ring-red-500/30 dark:bg-red-950/40',
-        iconWrap: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+            'border-destructive bg-destructive/10 ring-2 ring-destructive/30',
+        iconWrap: 'bg-destructive/15 text-destructive',
     },
 };
 </script>
@@ -61,7 +55,7 @@ const styles: Record<
             :for="`urgency-${option.value}`"
             :class="
                 cn(
-                    'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-all hover:shadow-sm',
+                    'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
                     modelValue === option.value
                         ? styles[option.value]?.selected
                         : 'border-input bg-card',

@@ -24,8 +24,8 @@ enum UrgencyLevel: string implements LabeledEnum
     public function description(): string
     {
         return match ($this) {
-            self::Bajo => 'Sugerencia o comentario general',
-            self::Medio => 'Requiere revisión',
+            self::Bajo => 'Comentario general o sugerencia',
+            self::Medio => 'Requiere revisión del área correspondiente',
             self::Alto => 'Requiere atención prioritaria',
             self::Critico => 'Situación delicada o urgente',
         };

@@ -41,9 +41,9 @@ const colsClass: Record<number, string> = {
             :for="`opt-${option.value}`"
             :class="
                 cn(
-                    'relative flex cursor-pointer items-center gap-2 rounded-lg border px-3.5 py-2.5 text-sm transition-all hover:border-primary/50 hover:bg-accent/40',
+                    'relative flex cursor-pointer items-center gap-2 rounded-lg border px-3.5 py-2.5 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gold/60 hover:bg-accent/40 hover:shadow-sm',
                     modelValue === option.value
-                        ? 'border-primary bg-primary/5 font-medium text-primary ring-1 ring-primary/30'
+                        ? 'border-primary bg-primary/5 font-medium text-primary ring-1 ring-gold/40'
                         : 'border-input bg-card',
                 )
             "

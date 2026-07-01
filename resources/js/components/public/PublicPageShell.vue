@@ -3,29 +3,39 @@ import BrandMark from '@/components/BrandMark.vue';
 </script>
 
 <template>
-    <div class="relative min-h-svh bg-muted/40">
+    <div class="relative min-h-svh overflow-hidden bg-background">
         <div
-            class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-emerald-900 via-emerald-800 to-transparent"
+            class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-[#10251B] via-[#17281f] to-transparent"
+        />
+        <div
+            class="pointer-events-none absolute -top-20 right-[15%] size-72 rounded-full bg-gold/20 blur-3xl"
+        />
+        <div
+            class="pointer-events-none absolute top-72 right-0 left-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
         />
 
         <div
             class="relative mx-auto flex min-h-svh w-full max-w-3xl flex-col px-4 py-10 sm:py-14"
         >
             <header
-                class="mb-8 flex flex-col items-center gap-4 text-center text-white"
+                class="mb-8 flex flex-col items-center gap-4 text-center text-marfil animate-in duration-700 fade-in slide-in-from-top-4"
             >
                 <BrandMark class="size-16 text-2xl shadow-lg" />
-                <div class="space-y-1">
+                <div class="space-y-2">
                     <p
-                        class="text-sm font-medium tracking-wide text-emerald-100/90 uppercase"
+                        class="text-sm font-medium tracking-widest text-gold uppercase"
                     >
                         Solariega Cenit
                     </p>
                     <h1 class="text-2xl font-semibold sm:text-3xl">
-                        <slot name="title"
-                            >Buzón de Quejas, Sugerencias y Reportes</slot
-                        >
+                        <slot name="title">Buzón Solariega</slot>
                     </h1>
+                    <p
+                        v-if="$slots.subtitle"
+                        class="mx-auto max-w-xl text-sm text-marfil/80"
+                    >
+                        <slot name="subtitle" />
+                    </p>
                 </div>
             </header>
 

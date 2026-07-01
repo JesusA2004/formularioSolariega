@@ -33,11 +33,11 @@ const percent = computed(
                     <div
                         :class="
                             cn(
-                                'flex size-7 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors',
+                                'flex size-7 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors duration-300',
                                 index < currentStep &&
-                                    'border-primary bg-primary text-primary-foreground',
+                                    'border-gold bg-gold text-gold-foreground',
                                 index === currentStep &&
-                                    'border-primary text-primary',
+                                    'border-primary text-primary ring-2 ring-gold/30',
                                 index > currentStep &&
                                     'border-muted text-muted-foreground',
                             )
@@ -63,8 +63,8 @@ const percent = computed(
                     v-if="index < steps.length - 1"
                     :class="
                         cn(
-                            'mx-2 h-0.5 flex-1',
-                            index < currentStep ? 'bg-primary' : 'bg-muted',
+                            'mx-2 h-0.5 flex-1 transition-colors duration-300',
+                            index < currentStep ? 'bg-gold' : 'bg-muted',
                         )
                     "
                 />

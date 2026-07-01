@@ -47,8 +47,8 @@ const yesNoOptions = [
 ];
 
 const anonymousOptions = [
-    { value: '1', label: 'Sí, deseo permanecer anónimo' },
-    { value: '0', label: 'No, deseo proporcionar mis datos para seguimiento' },
+    { value: '1', label: 'Sí, deseo mantener mi identidad en reserva' },
+    { value: '0', label: 'No, deseo dejar mis datos para seguimiento' },
 ];
 
 const form = useForm({
@@ -180,19 +180,30 @@ function submit() {
     </Head>
 
     <PublicPageShell>
-        <template #title>Buzón de Quejas, Sugerencias y Reportes</template>
+        <template #title>Buzón Solariega</template>
+        <template #subtitle
+            >Un canal confidencial para compartir quejas, sugerencias,
+            reportes o situaciones que requieran atención.</template
+        >
 
-        <p class="mx-auto mb-8 max-w-xl text-center text-sm text-emerald-50/90">
-            Este formulario tiene como finalidad recibir quejas, sugerencias,
-            reportes o comentarios relacionados con el ambiente laboral,
-            procesos internos, condiciones de trabajo o cualquier situación que
-            requiera atención. La información será revisada de manera
-            confidencial por el área correspondiente. Puedes enviar tu reporte
-            de forma anónima o proporcionar tus datos si deseas recibir
-            seguimiento.
+        <p
+            class="mx-auto mb-6 max-w-xl text-center text-sm text-muted-foreground"
+        >
+            Tu reporte será revisado con seriedad, confidencialidad y respeto
+            por el área correspondiente.
         </p>
 
-        <Card class="mx-auto w-full max-w-2xl shadow-xl">
+        <div class="mb-6 flex justify-center">
+            <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-medium tracking-wide text-gold-foreground uppercase"
+            >
+                Completa tu solicitud
+            </span>
+        </div>
+
+        <Card
+            class="mx-auto w-full max-w-2xl animate-in rounded-2xl border-none bg-card/90 shadow-2xl shadow-black/10 backdrop-blur duration-700 fade-in slide-in-from-bottom-4"
+        >
             <CardHeader class="space-y-4 pb-2">
                 <StepProgress :steps="steps" :current-step="currentStep" />
             </CardHeader>
@@ -220,7 +231,10 @@ function submit() {
                         </div>
 
                         <div class="space-y-2">
-                            <Label>¿Deseas que tu solicitud sea anónima?</Label>
+                            <Label
+                                >¿Quieres enviar este reporte de forma
+                                anónima?</Label
+                            >
                             <OptionCardGroup
                                 v-model="form.is_anonymous"
                                 :options="anonymousOptions"
@@ -287,14 +301,18 @@ function submit() {
                         class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
                     >
                         <div class="space-y-2">
-                            <Label for="description"
-                                >Describe tu solicitud</Label
-                            >
+                            <Label for="description">Cuéntanos qué ocurrió</Label>
+                            <p class="text-xs text-muted-foreground">
+                                Describe la situación con el mayor detalle
+                                posible: qué pasó, cuándo ocurrió, dónde
+                                sucedió y quiénes estuvieron involucrados, si
+                                aplica.
+                            </p>
                             <Textarea
                                 id="description"
                                 v-model="form.description"
                                 rows="6"
-                                placeholder="Describe qué ocurrió, cuándo sucedió, dónde fue y quiénes estuvieron involucrados, si aplica."
+                                placeholder="Escribe aquí los detalles de tu reporte..."
                             />
                             <p class="text-xs text-muted-foreground">
                                 Mínimo 20 caracteres.
@@ -325,7 +343,10 @@ function submit() {
                         class="animate-in space-y-6 duration-300 fade-in slide-in-from-right-2"
                     >
                         <div class="space-y-2">
-                            <Label>Nivel de urgencia</Label>
+                            <Label
+                                >¿Qué tan urgente consideras esta
+                                situación?</Label
+                            >
                             <UrgencyLevelPicker
                                 v-model="form.urgency_level"
                                 :options="options.urgencyLevels"
@@ -407,7 +428,7 @@ function submit() {
                         <InputError :message="form.errors.accepted_terms" />
 
                         <div
-                            class="flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200"
+                            class="flex items-center gap-2 rounded-lg bg-primary/5 p-3 text-xs text-primary"
                         >
                             <ShieldCheck class="size-4 shrink-0" />
                             Tu información se maneja de forma confidencial por
