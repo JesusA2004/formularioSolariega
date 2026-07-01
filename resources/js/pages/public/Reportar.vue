@@ -137,7 +137,6 @@ function submit() {
 
 <template>
     <Head>
-        <title>Buzón Solariega</title>
         <meta
             name="description"
             content="Canal confidencial de Solariega Cenit para recibir quejas, sugerencias, reportes e incidentes internos de forma segura y organizada."
