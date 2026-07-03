@@ -225,8 +225,8 @@
         <table>
             <tr>
                 <td style="width: 90px;">
-                    @if (file_exists(public_path('images/logoLetras.png')))
-                        <img src="{{ public_path('images/logoLetras.png') }}" alt="Solariega Cenit">
+                    @if (file_exists(public_path('images/logo.png')))
+                        <img src="{{ public_path('images/logo.png') }}" alt="Solariega Cenit">
                     @endif
                 </td>
                 <td style="text-align: right;">

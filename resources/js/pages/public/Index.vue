@@ -106,7 +106,7 @@ function submit() {
                 />
                 <img
                     v-if="!heroImageMissing"
-                    src="/images/buzon-hero.png"
+                    src="/images/buzon-hero.jpg"
                     alt=""
                     class="absolute inset-0 size-full object-cover"
                     @error="heroImageMissing = true"
@@ -126,7 +126,7 @@ function submit() {
                 class="relative z-10 flex animate-in items-center justify-center duration-700 fade-in slide-in-from-top-4"
             >
                 <img
-                    src="/images/logoLetras.png"
+                    src="/images/logo.png"
                     alt="Solariega Cenit"
                     class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
                 />

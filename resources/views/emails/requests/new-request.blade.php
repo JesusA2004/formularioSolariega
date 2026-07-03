@@ -11,7 +11,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:640px;background:#ffffff;border-radius:22px;overflow:hidden;box-shadow:0 18px 45px rgba(23,23,23,.10);">
                     <tr>
                         <td style="background:#171717;padding:34px 32px;text-align:center;border-bottom:3px solid #D4AF37;">
-                            <img src="{{ asset('images/logoLetras.png') }}" alt="Solariega Cenit" style="max-width:220px;height:auto;margin-bottom:14px;">
+                            <img src="{{ asset('images/logo.png') }}" alt="Solariega Cenit" style="max-width:220px;height:auto;margin-bottom:14px;">
                             <div style="color:#F3D67A;font-size:12px;letter-spacing:2px;text-transform:uppercase;">
                                 Buzón Solariega
                             </div>

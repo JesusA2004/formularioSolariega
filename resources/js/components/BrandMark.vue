@@ -11,7 +11,7 @@ const props = withDefaults(
 
 <template>
     <img
-        src="/images/logoLetras.png"
+        src="/images/logo.png"
         alt="Solariega Cenit"
         :class="
             cn(

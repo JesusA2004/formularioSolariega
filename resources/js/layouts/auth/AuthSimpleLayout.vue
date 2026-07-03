@@ -28,7 +28,7 @@ defineProps<{
                         class="flex flex-col items-center gap-3 font-medium"
                     >
                         <img
-                            src="/images/logoLetras.png"
+                            src="/images/logo.png"
                             alt="Solariega Cenit"
                             class="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105 sm:h-28 lg:h-32 xl:h-40"
                         />
